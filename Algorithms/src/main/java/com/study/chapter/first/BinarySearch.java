@@ -24,9 +24,7 @@ package com.study.chapter.first;
  *
  ******************************************************************************/
 
-import edu.princeton.cs.algs4.*;
 
-import java.util.Arrays;
 
 public class BinarySearch {
     public static void main(String[] args) {
@@ -34,9 +32,7 @@ public class BinarySearch {
         // int a = rank(1,new int[]{1,1,1,1,2,3,4,5,6});
         // System.out.println(a);
     }
-    public static void test(){
 
-    } 
     /**
      * This class should not be instantiated.
      */
@@ -49,8 +45,20 @@ public class BinarySearch {
      * @return 返回小于该key的同时属于arr的元素数量
      */
     public static int rank(int key, int[] arr) {
+        // 数组必须有序
+        int lo = 0;
+        int hi = arr.length - 1;
+        while (lo <= hi) {
+            //    要么不存在，要么在arr[lo..hi]之间
+            int mid = lo + (hi - lo) / 2;
+
+            if (key < arr[mid]) hi = mid - 1;
+            else if (key > arr[mid]) lo = mid + 1;
+            else return mid;
+        }
+        return -1;
         //  调用二叉树搜索明显更快；
-        int count = 0;
+      /*  int count = 0;
         int[] arrSplit = arr;
         int a = -1;
         while ((a = indexOf(arrSplit,key)) != -1) {
@@ -60,7 +68,7 @@ public class BinarySearch {
             }
             arrSplit = Arrays.copyOfRange(arr,a+1,arr.length);
         }
-        return count;
+        return count;*/
     }
 
     /**
