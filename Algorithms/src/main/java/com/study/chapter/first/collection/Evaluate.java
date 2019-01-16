@@ -1,6 +1,6 @@
 package com.study.chapter.first.collection;
 
-import edu.princeton.cs.algs4.StdIn;
+
 
 /**
  * 双栈算术表达式求值

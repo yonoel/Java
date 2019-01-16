@@ -1,10 +1,7 @@
 package com.study.chapter.first;
 
-import edu.princeton.cs.algs4.Stack;
 
-import java.util.LinkedList;
 import java.util.StringJoiner;
-import java.util.stream.Stream;
 
 /**
  * Given a string containing just the characters '(', ')', '{', '}', '[' and ']'
