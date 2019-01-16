@@ -136,21 +136,22 @@ public class Test {
         // 暴力解法
         //    对数组中每一个元素取正取的值
         //    然后放到set里，取set的size
-        Set<String> set = new HashSet<String>();
-        for (String str : emails) {
-            String email = Stream.of(str.split(".com")[0].split("")).reduce("",
-                    new BinaryOperator<String>() {
-                        @Override
-                        public String apply(String s, String s2) {
-                            if (!"+".equals(s2) && !".".equals(s2))
-                                return s.concat(s2);
-                            else return s;
-                        }
-                    });
-            email += ".com";
-            set.add(email);
-        }
-        return set.size();
+        // Set<String> set = new HashSet<String>();
+        // for (String str : emails) {
+        //     String email = Stream.of(str.split(".com")[0].split("")).reduce("",
+        //             new BinaryOperator<String>() {
+        //                 @Override
+        //                 public String apply(String s, String s2) {
+        //                     if (!"+".equals(s2) && !".".equals(s2))
+        //                         return s.concat(s2);
+        //                     else return s;
+        //                 }
+        //             });
+        //     email += ".com";
+        //     set.add(email);
+        // }
+        // return set.size();
+        return 0;
     }
 
     /**
