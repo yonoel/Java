@@ -15,6 +15,7 @@
 
 # Package Files #
 *.jar
+!algs4.jar
 *.war
 *.nar
 *.ear
