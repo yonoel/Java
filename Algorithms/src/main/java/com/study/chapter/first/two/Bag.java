@@ -1,24 +1,28 @@
-package com.study.chapter.first.collection;
+package com.study.chapter.first.two;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 
 /**
  * 只用于收集和迭代，不能删除
+ *
  * @param <Item>
  */
-public class Bag <Item> implements Iterable<Item> {
+public class Bag<Item> implements Iterable<Item> {
     private Node first;
-    private class Node{
+
+    private class Node {
         Item item;
         Node next;
     }
+
     @Override
     public Iterator<Item> iterator() {
         return new ListIterator();
     }
-    private class ListIterator implements Iterator<Item>{
+
+    private class ListIterator implements Iterator<Item> {
         private Node current = first;
+
         @Override
         public boolean hasNext() {
             return current != null;
@@ -31,12 +35,13 @@ public class Bag <Item> implements Iterable<Item> {
             return item;
         }
     }
-    void add(Item item){
+
+    void add(Item item) {
         Node oldFirst = first;
         first = new Node();
         first.item = item;
         first.next = oldFirst;
     }
-    boolean isEmpty(){return  false;}
-    int size(){return 1;}
+
+
 }

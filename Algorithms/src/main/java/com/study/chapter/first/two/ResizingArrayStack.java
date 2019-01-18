@@ -1,7 +1,7 @@
-package com.study.chapter.first;
+package com.study.chapter.first.two;
 
 import java.util.Iterator;
-
+// LIFO
 public class ResizingArrayStack<Item> implements Iterable<Item> {
     private Item[] a = (Item[]) new Object[1];//first element
     private int N = 0;

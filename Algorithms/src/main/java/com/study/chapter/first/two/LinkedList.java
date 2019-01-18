@@ -1,9 +1,10 @@
-package com.study.chapter.first;
+package com.study.chapter.first.two;
 
 public class LinkedList <Item> {
     Node first;
     Node last;
     private int N = 0;
+    // 私有类，一个节点
     private class Node {
         Item item;
         Node next;//next 指向下一个node

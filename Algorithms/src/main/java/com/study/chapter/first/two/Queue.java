@@ -1,4 +1,4 @@
-package com.study.chapter.first.collection;
+package com.study.chapter.first.two;
 
 import java.util.Iterator;
 
@@ -32,6 +32,7 @@ public class Queue<Item> implements Iterable<Item> {
     }
 
     Item dequeue(){
+        if(isEmpty()) return null;
         Item item = first.item;
         first = first.next;
         if(isEmpty()) last = null;

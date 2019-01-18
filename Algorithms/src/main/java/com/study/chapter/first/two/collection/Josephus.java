@@ -1,4 +1,4 @@
-package com.study.chapter.first.collection;
+package com.study.chapter.first.two.collection;
 
 public class Josephus {
     private class Person {

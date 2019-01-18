@@ -1,4 +1,4 @@
-package com.study.chapter.first;
+package com.study.chapter.first.two;
 
 
 import java.util.StringJoiner;
@@ -13,8 +13,8 @@ public class Parentheses {
     static String no3 = "[]";
 
     public static void main(String[] args) {
-        String s = "()[[";
-
+        String s = "([])";
+        System.out.println(isValid(s));
 
     /*    while (search(s)) {
             s = split(s);
@@ -43,7 +43,7 @@ public class Parentheses {
     /**
      * 最高效解法
      */
-    public boolean isValid(String s)
+    public static boolean isValid(String s)
     {
         int sLength = s.length();
 
