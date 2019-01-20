@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 public class Test {
     public static void main(String[] args) {
 
-        for (int i = 0; i < 10; i++)
-            System.out.println(i);
+//        for (int i = 0; i < 10; i++)
+//            System.out.println(i);
 
         // new com.chapter.first.Test().numUniqueEmails(new String[]{
         //         "test.email+alex@leetcode.com", "test.e.mail+bob.cathy@leetcode.com", "testemail+david@lee.tcode.com", "teste+mail+david@lee.tcode.com"
