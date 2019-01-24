@@ -1,4 +1,4 @@
-package com.study.chapter.first.two;
+package com.study.chapter.first.ThirdSection;
 
 public class FixedCapactiyStackOfStrings {
     private String[] a;

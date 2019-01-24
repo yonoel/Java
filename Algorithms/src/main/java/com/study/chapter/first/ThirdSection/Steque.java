@@ -1,10 +1,10 @@
-package com.study.chapter.first.two;
+package com.study.chapter.first.ThirdSection;
 
-// FIFO
-public class Stack<T> {
+// 1.3.32
+public class Steque<T> {
     private Node first;
     private int N;
-
+    private Node last;
     private class Node {
         T t;
         Node next;
@@ -17,18 +17,21 @@ public class Stack<T> {
     int size() {
         return N;
     }
-
+    void enqueue(T t){
+        if (isEmpty()) throw new ArrayIndexOutOfBoundsException();
+        Node newlast = new Node();
+        newlast.t = t;
+        last.next = newlast;
+        last = newlast;
+        N++;
+    }
     void push(T t) {
         Node oldFirst = first;
         first = new Node();
         first.t = t;
         first.next = oldFirst;
+        if(N == 0) first = last;
         N++;
-    }
-
-    T peek() {
-        if (isEmpty()) throw new NullPointerException();
-        return first.t;
     }
 
     T pop() {

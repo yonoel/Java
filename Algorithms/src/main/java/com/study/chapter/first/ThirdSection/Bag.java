@@ -1,4 +1,4 @@
-package com.study.chapter.first.two;
+package com.study.chapter.first.ThirdSection;
 
 import java.util.Iterator;
 

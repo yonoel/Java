@@ -1,4 +1,4 @@
-package com.study.chapter.first.two;
+package com.study.chapter.first.ThirdSection;
 
 import java.util.Iterator;
 
@@ -7,7 +7,7 @@ import java.util.Iterator;
  *
  * @param <Item>
  */
-public class Queue<Item> implements Iterable<Item> {
+public class Queue<Item> implements Iterable<Item>, Cloneable {
 
 
     @Override
@@ -25,6 +25,11 @@ public class Queue<Item> implements Iterable<Item> {
     }
 
     public Queue() {
+    }
+
+    public Queue(Queue queue) {
+        Queue retQueue = new Queue<>();
+        // bianli -->tianjia
     }
 
     public void enqueue(Item item) {

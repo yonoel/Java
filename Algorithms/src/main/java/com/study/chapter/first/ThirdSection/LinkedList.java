@@ -1,4 +1,4 @@
-package com.study.chapter.first.two;
+package com.study.chapter.first.ThirdSection;
 
 public class LinkedList<Item> {
 
@@ -205,6 +205,27 @@ public class LinkedList<Item> {
             return first;
         else
             return max;
+    }
+    // 1.3.30 接收一个链表的首节点，反转链表，并返回结果链表的首节点
+    public Node reverse(Node x){
+        Node first = x;
+        Node reverse = null;
+        while (first != null){
+            Node second = first.next;
+            first.next = reverse;
+            reverse = first;
+            first = second;
+        }
+        return  reverse;
+    }
+    public Node reverseByrecursion(Node first){
+        if(first == null) return null;
+        if(first.next == null) return this.first;
+        Node sec = first.next;
+        Node rest = reverseByrecursion(first);
+        sec.next = first;
+        first.next = null;
+        return  rest;
     }
     public static void main(String[] args) {
 
