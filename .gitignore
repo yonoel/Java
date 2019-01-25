@@ -1,4 +1,6 @@
 .idea/
+# iml
+*.iml
 # Compiled class file
 *.class
 
@@ -13,6 +15,7 @@
 
 # Package Files #
 *.jar
+!algs4.jar
 *.war
 *.nar
 *.ear
