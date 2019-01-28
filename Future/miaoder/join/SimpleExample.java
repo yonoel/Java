@@ -34,7 +34,7 @@ public class SimpleExample {
         // thread exits
         while (t.isAlive()) {
             threadMessage("Still waiting...");
-            // Wait maximum of 1 second
+            // Wait maximum of 1 Sec_Sort
             // for MessageLoop thread
             // to finish.
             t.join();
