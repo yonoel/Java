@@ -1,6 +1,6 @@
 package com.study.springdata.springdatastudy.controller;
 
-import com.miaoder.springdatastudy.dao.UserRepository;
+import com.study.springdata.springdatastudy.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
