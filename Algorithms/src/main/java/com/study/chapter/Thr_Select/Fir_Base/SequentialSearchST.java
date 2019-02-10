@@ -17,14 +17,14 @@ public class SequentialSearchST<Key, Value> {
 
     private int n = 0;
 
-    Value get(Key key) {
+    public Value get(Key key) {
         for (Node i = first; i != null; i = i.next) {
             if (key.equals(i.key)) return i.value;
         }
         return null;
     }
 
-    void put(Key key, Value value) {
+    public void put(Key key, Value value) {
         for (Node x = first; x != null; x = x.next)
             if (key.equals(x.key)) {
                 x.value = value;
