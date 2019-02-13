@@ -45,6 +45,13 @@ public class WeightQuickUnionUF {
         }
         count--;
     }
+
+    public static void main(String[] args) {
+        WeightQuickUnionUF weightQuickUnionUF = new WeightQuickUnionUF(10);
+        weightQuickUnionUF.union(1,2);
+        weightQuickUnionUF.union(3,4);
+        weightQuickUnionUF.union(1,3);
+    }
 }
 
 
