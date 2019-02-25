@@ -1,5 +1,8 @@
 package com.study.chapter.Four_Graph.Sec_DiGraph;
 
+import com.study.chapter.Four_Graph.Four_ShortestPathTree.DirectedEdge;
+import com.study.chapter.Four_Graph.Four_ShortestPathTree.EdgeWeightedDigraph;
+
 public class Toplogical {
     private Iterable<Integer> order;
 
@@ -11,6 +14,12 @@ public class Toplogical {
         }
     }
 
+    public Toplogical(EdgeWeightedDigraph g) {
+        this(Digraph.convert(g));
+    }
+    public Toplogical(EdgeWeightedDigraph g ,boolean doReverse){
+        this(Digraph.reverseConvert(g));
+    }
     public Iterable<Integer> getOrder() {
         return order;
     }

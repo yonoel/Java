@@ -1,5 +1,7 @@
 package com.study.chapter.Four_Graph.Sec_DiGraph;
 
+import com.study.chapter.Four_Graph.Thri_WeightedGraph.Edge;
+import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.Stack;
 
 public class DirectedCycle {
@@ -16,7 +18,7 @@ public class DirectedCycle {
             if(!marked[i]) dfs(g,i);
         }
     }
-    private void dfs(Digraph g,int v){
+    private void dfs(Digraph g, int v){
         onStack[v] = true;
         marked[v] = true;
         Iterable<Integer> adjs = g.adj(v);

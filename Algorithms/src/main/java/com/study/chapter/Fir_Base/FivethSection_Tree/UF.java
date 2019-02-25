@@ -16,13 +16,18 @@ public class UF {
 
     void union(int p, int q) {
         //
+        int pRoot = find(p),qRoot = find(q);
+        if(pRoot == qRoot) return;
+        id[pRoot] = qRoot;
+        n--;
     }
 
     int find(int p) {
-        return 0;
+        while (p != id[p]) p = id[p];
+        return p;
     }
 
-    boolean connected(int p, int q) {
+    public boolean connected(int p, int q) {
         return find(p) == find(q);
     }
 
