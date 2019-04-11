@@ -1,6 +1,7 @@
 package com.study.chapter.Fiv_String.Thri_SubStringSearch;
 
 public class KMP {
+    // different array 第一个下标是字符char，第二个长度是pattern的长度，
     private int[][] dfa;
     private int M;
     private String pat;
@@ -13,11 +14,12 @@ public class KMP {
         dfa[pat.charAt(0)][0] = 1;
         for (int x = 0, j = 1; j < M; j++) {
             for (int c = 0; c < R; c++) {
+                // 初始化dfa
                 dfa[c][j] = dfa[c][x];
             }
-            int d = pat.charAt(j);
-            dfa[pat.charAt(j)][j] = j + 1;
-            x = dfa[pat.charAt(j)][x];
+            char c = pat.charAt(j);
+            dfa[c][j] = j + 1;
+            x = dfa[c][x];
         }
     }
 

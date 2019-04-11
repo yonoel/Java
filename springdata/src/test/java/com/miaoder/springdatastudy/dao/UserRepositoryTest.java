@@ -1,7 +1,7 @@
 package com.miaoder.springdatastudy.dao;
 
 
-import com.study.springdata.springdatastudy.SpringdatastudyApplication;
+import com.study.springdata.SpringdataApplication;
 import com.study.springdata.springdatastudy.dao.UserRepository;
 import com.study.springdata.springdatastudy.domain.User;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {SpringdatastudyApplication.class})
+@SpringBootTest(classes = {SpringdataApplication.class})
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
