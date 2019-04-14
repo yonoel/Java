@@ -1,6 +1,7 @@
 package com.study.chapter.Fiv_String.Thri_SubStringSearch;
 
 public class History {
+
     /**
      * ---CREATE LOG---
      *
@@ -11,20 +12,26 @@ public class History {
      * @Author Qian Yi Zhen
      * @Date ------------
      **/
-    // 暴力查找
-    public static int search(String pat, String txt) {
-        int m = pat.length();
+    /**
+     * 自己搞的暴力解法
+     */
+    public static int searchO(String pat, String txt) {
         int N = txt.length();
-        // i 跟踪了文本txt
-        for (int i = 0; i <= N - m; i++) {
+        int m = pat.length();
+        for (int i = 0; i < N - m; i++) {
+            // 如果匹配成功那么，j == M ，且i也向后偏移了M
             int j;
             for (j = 0; j < m; j++) {
+                // 对于txt而言，它提取出来的字符既是 i + j
                 if (txt.charAt(i + j) != pat.charAt(j)) break;
             }
             if (j == m) return i;
         }
         return N;
     }
+
+
+
     // 暴力查找的另一种实现
     public static int searchVersion2(String pat, String txt) {
         int j, M = pat.length(), i, N = txt.length();
