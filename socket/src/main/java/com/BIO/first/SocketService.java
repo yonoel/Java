@@ -1,4 +1,4 @@
-package com.study.first;
+package com.BIO.first;
 
 import java.io.BufferedReader;
 import java.io.IOException;

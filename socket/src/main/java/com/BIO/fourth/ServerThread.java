@@ -1,4 +1,4 @@
-package com.study.first.fourth;
+package com.BIO.fourth;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,18 +11,20 @@ public class ServerThread implements Runnable {
     public ServerThread(Socket socket) {
         this.socket = socket;
     }
+
     @Override
-    public void run(){
-        try{
+    public void run() {
+        try {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while (true){
+            while (true) {
                 String string = br.readLine();
-                for (Socket item:SocketService.socketList){
+                for (Socket item : SocketService.socketList) {
                     PrintWriter pw = new PrintWriter(item.getOutputStream());
-                    pw.println("用户的信息:"+socket.getPort());
+                    pw.println("用户的信息:" + socket.getPort());
                     pw.flush();
                 }
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.study.first.third;
+package com.BIO.third;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
