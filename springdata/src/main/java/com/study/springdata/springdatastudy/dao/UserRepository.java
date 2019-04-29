@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 
 public interface UserRepository extends MyBaseRepository<User,Long>{
     Page<User> getDistinctByIdIn(Long[] ids, Pageable pageable);
-    @Query()
     User getDistinctById(Long id);
     @Async
     Slice<User> getAllByIdIn(Long[] ids, Sort sort);
