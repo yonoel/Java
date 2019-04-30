@@ -9,32 +9,37 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-//@DataJpaTest
-@DataJdbcTest
+@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    org.springframework.transaction.PlatformTransactionManager platformTransactionManager;
-
+    DataSource dataSource;
+    @Test
+    public void testSource(){
+//        dataSource.getLogWriter()
+//        platformTransactionManager.getDataSource().get
+    }
+    @Test
     public void saveOne() {
         User user = new User();
         user.setName("NO.1");
         userRepository.save(user);
-        System.out.println(UUID.randomUUID());
-        System.out.println("你好" + this.platformTransactionManager);
     }
 
     @Test
