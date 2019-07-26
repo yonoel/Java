@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+<h1>HELLO</h1>
+<button id="test">click here</button>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    let btn = document.getElementById("test");
+    btn.onclick = function (ev) {
+        for (let i = 0; i < 100; i++) {
+            axios.post("concurrency")
+                .then((e) => {
+                        console.log(e,i);
+                    }
+                )
+        }
+
+    }
+
+</script>
+</body>
+</html>
