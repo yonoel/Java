@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)https://www.jianshu.com/p/8a58d8335270 -->
+<html><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+
+  <!-- Start of Baidu Transcode -->
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta name="applicable-device" content="pc,mobile">
+  <meta name="MobileOptimized" content="width">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="mobile-agent" content="format=html5;url=https://www.jianshu.com/p/8a58d8335270">
+  <!-- End of Baidu Transcode -->
+
+    <meta name="description" content="1.并发编程领域的关键问题 1.1 线程之间的通信 线程的通信是指线程之间以何种机制来交换信息。在编程中，线程之间的通信机制有两种，共享内存和消息传递。在共享内存的并发模型里，线程之间共享程序的公共状态，线程之间通过写-读内存中的公共状态来隐式进行通信，典型的共享内存通信方式就是通过共享对象进行通信。在消息传递的并发模型里，线程之间没有公共状态，线程之间必须通过明确的发送消息来显式进行通信，...">
+
+  <meta name="360-site-verification" content="604a14b53c6b871206001285921e81d8">
+  <meta property="wb:webmaster" content="294ec9de89e7fadb">
+  <meta property="qc:admins" content="104102651453316562112116375">
+  <meta property="qc:admins" content="11635613706305617">
+  <meta property="qc:admins" content="1163561616621163056375">
+  <meta name="google-site-verification" content="cV4-qkUJZR6gmFeajx_UyPe47GW9vY6cnCrYtCHYNh4">
+  <meta name="google-site-verification" content="HF7lfF8YEGs1qtCE-kPml8Z469e2RHhGajy6JPVy5XI">
+  <meta http-equiv="mobile-agent" content="format=html5; url=https://www.jianshu.com/p/8a58d8335270">
+
+  <!-- Apple -->
+  <meta name="apple-mobile-web-app-title" content="简书">
+
+    <!--  Meta for Smart App Banner -->
+  <meta name="apple-itunes-app" content="app-id=888237539, app-argument=jianshu://notes/33098411">
+  <!-- End -->
+
+  <!--  Meta for Twitter Card -->
+  <meta content="summary" property="twitter:card">
+  <meta content="@jianshucom" property="twitter:site">
+  <meta content="JMM和底层实现原理" property="twitter:title">
+  <meta content="1.并发编程领域的关键问题 1.1 线程之间的通信 线程的通信是指线程之间以何种机制来交换信息。在编程中，线程之间的通信机制有两种，共享内存和消息传递。在共享内存的并发模型里..." property="twitter:description">
+  <meta content="https://www.jianshu.com/p/8a58d8335270" property="twitter:url">
+  <!-- End -->
+
+  <!--  Meta for OpenGraph -->
+  <meta property="fb:app_id" content="865829053512461">
+  <meta property="og:site_name" content="简书">
+  <meta property="og:title" content="JMM和底层实现原理">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.jianshu.com/p/8a58d8335270">
+  <meta property="og:description" content="1.并发编程领域的关键问题 1.1 线程之间的通信 线程的通信是指线程之间以何种机制来交换信息。在编程中，线程之间的通信机制有两种，共享内存和消息传递。在共享内存的并发模型里，线程之间共享程序的...">
+  <!-- End -->
+
+  <!--  Meta for Facebook Applinks -->
+  <meta property="al:ios:url" content="jianshu://notes/33098411">
+  <meta property="al:ios:app_store_id" content="888237539">
+  <meta property="al:ios:app_name" content="简书">
+
+  <meta property="al:android:url" content="jianshu://notes/33098411">
+  <meta property="al:android:package" content="com.jianshu.haruki">
+  <meta property="al:android:app_name" content="简书">
+  <!-- End -->
+
+
+    <title>JMM和底层实现原理 - 简书</title>
+
+  <meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="gUIE6AsADbaPSjKRcC8gOUHDA2vmMKP5YnphGaXoJZiD6obS8tuOtM5LBmDSGzkPtqgvzC9J7mMNnj4xR+o7gg==">
+
+  <link rel="stylesheet" media="all" href="./JMM和底层实现原理 - 简书_files/web-30728a1164102859481d.css">
+  
+  <link rel="stylesheet" media="all" href="./JMM和底层实现原理 - 简书_files/entry-aa75deb505b1b600256a.css">
+
+  <link href="https://cdn2.jianshu.io/assets/favicons/favicon-e743bfb1821442341c3ab15bdbe804f7ad97676bd07a770ccc9483473aa76f06.ico" rel="shortcut icon" type="image/x-icon">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/57-a6f1f1ee62ace44f6dc2f6a08575abd3c3b163288881c78dd8d75247682a4b27.png" sizes="57x57">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/72-fb9834bcfce738fd7b9c5e31363e79443e09a81a8e931170b58bc815387c1562.png" sizes="72x72">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/76-49d88e539ff2489475d603994988d871219141ecaa0b1a7a9a1914f4fe3182d6.png" sizes="76x76">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/114-24252fe693524ed3a9d0905e49bff3cbd0228f25a320aa09053c2ebb4955de97.png" sizes="114x114">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/120-1bb7371f5e87f93ce780a5f1a05ff1b176828ee0d1d130e768575918a2e05834.png" sizes="120x120">
+      <link rel="apple-touch-icon-precomposed" href="https://cdn2.jianshu.io/assets/apple-touch-icons/152-bf209460fc1c17bfd3e2b84c8e758bc11ca3e570fd411c3bbd84149b97453b99.png" sizes="152x152">
+
+  <!-- Start of 访问统计 -->
+    <script src="./JMM和底层实现原理 - 简书_files/push.js"></script><script src="./JMM和底层实现原理 - 简书_files/hm.js"></script><script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?0c0e9d9b1e7d617b3e6842e85b9fb068";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+  <!-- End of 访问统计 -->
+<style type="text/css">@charset "UTF-8";.image-package .image-container .image-view-error:after,.image-package .image-container .image-view-maintain:after{position:absolute;top:50%;left:50%;width:100%;-webkit-transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%);transform:translate(-50%,-50%);color:#888;font-size:14px}.image-package .image-container{position:relative;z-index:2;background-color:#eee;-webkit-transition:background-color .1s linear;-o-transition:background-color .1s linear;transition:background-color .1s linear;margin:0 auto}body.reader-night-mode .image-package .image-container{background-color:#545454}.image-package .image-container-fill{z-index:1}.image-package .image-container .image-view{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden}.image-package .image-container .image-view-error:after{content:"图片获取失败，请点击重试"}.image-package .image-container .image-view-maintain:after{content:"系统维护中，图片暂时无法加载"}.image-package .image-container .image-view img.image-loading{opacity:.3}.image-package .image-container .image-view img{-webkit-transition:all .15s linear;-o-transition:all .15s linear;transition:all .15s linear;z-index:2;opacity:1}</style><style type="text/css">fieldset[disabled] .multiselect {
+  pointer-events: none;
+}
+
+.multiselect__spinner {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  width: 48px;
+  height: 35px;
+  background: #fff;
+  display: block;
+}
+
+.multiselect__spinner:after,
+.multiselect__spinner:before {
+  position: absolute;
+  content: "";
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 100%;
+  border-color: #41b883 transparent transparent;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: 0 0 0 1px transparent;
+}
+
+.multiselect__spinner:before {
+  animation: a 2.4s cubic-bezier(.41,.26,.2,.62);
+  animation-iteration-count: infinite;
+}
+
+.multiselect__spinner:after {
+  animation: a 2.4s cubic-bezier(.51,.09,.21,.8);
+  animation-iteration-count: infinite;
+}
+
+.multiselect__loading-enter-active,
+.multiselect__loading-leave-active {
+  transition: opacity .4s ease-in-out;
+  opacity: 1;
+}
+
+.multiselect__loading-enter,
+.multiselect__loading-leave-active {
+  opacity: 0;
+}
+
+.multiselect,
+.multiselect__input,
+.multiselect__single {
+  font-family: inherit;
+  font-size: 14px;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
+.multiselect {
+  box-sizing: content-box;
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 40px;
+  text-align: left;
+  color: #35495e;
+}
+
+.multiselect * {
+  box-sizing: border-box;
+}
+
+.multiselect:focus {
+  outline: none;
+}
+
+.multiselect--disabled {
+  opacity: .6;
+}
+
+.multiselect--active {
+  z-index: 1;
+}
+
+.multiselect--active:not(.multiselect--above) .multiselect__current,
+.multiselect--active:not(.multiselect--above) .multiselect__input,
+.multiselect--active:not(.multiselect--above) .multiselect__tags {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.multiselect--active .multiselect__select {
+  transform: rotate(180deg);
+}
+
+.multiselect--above.multiselect--active .multiselect__current,
+.multiselect--above.multiselect--active .multiselect__input,
+.multiselect--above.multiselect--active .multiselect__tags {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.multiselect__input,
+.multiselect__single {
+  position: relative;
+  display: inline-block;
+  min-height: 20px;
+  line-height: 20px;
+  border: none;
+  border-radius: 5px;
+  background: #fff;
+  padding: 0 0 0 5px;
+  width: 100%;
+  transition: border .1s ease;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  vertical-align: top;
+}
+
+.multiselect__tag~.multiselect__input,
+.multiselect__tag~.multiselect__single {
+  width: auto;
+}
+
+.multiselect__input:hover,
+.multiselect__single:hover {
+  border-color: #cfcfcf;
+}
+
+.multiselect__input:focus,
+.multiselect__single:focus {
+  border-color: #a8a8a8;
+  outline: none;
+}
+
+.multiselect__single {
+  padding-left: 6px;
+  margin-bottom: 8px;
+}
+
+.multiselect__tags-wrap {
+  display: inline;
+}
+
+.multiselect__tags {
+  min-height: 40px;
+  display: block;
+  padding: 8px 40px 0 8px;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+}
+
+.multiselect__tag {
+  position: relative;
+  display: inline-block;
+  padding: 4px 26px 4px 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+  color: #fff;
+  line-height: 1;
+  background: #41b883;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.multiselect__tag-icon {
+  cursor: pointer;
+  margin-left: 7px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-weight: 700;
+  font-style: normal;
+  width: 22px;
+  text-align: center;
+  line-height: 22px;
+  transition: all .2s ease;
+  border-radius: 5px;
+}
+
+.multiselect__tag-icon:after {
+  content: "\D7";
+  color: #266d4d;
+  font-size: 14px;
+}
+
+.multiselect__tag-icon:focus,
+.multiselect__tag-icon:hover {
+  background: #369a6e;
+}
+
+.multiselect__tag-icon:focus:after,
+.multiselect__tag-icon:hover:after {
+  color: #fff;
+}
+
+.multiselect__current {
+  min-height: 40px;
+  overflow: hidden;
+  padding: 8px 12px 0;
+  padding-right: 30px;
+  white-space: nowrap;
+  border-radius: 5px;
+  border: 1px solid #e8e8e8;
+}
+
+.multiselect__current,
+.multiselect__select {
+  line-height: 16px;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.multiselect__select {
+  position: absolute;
+  width: 40px;
+  height: 38px;
+  right: 1px;
+  top: 1px;
+  padding: 4px 8px;
+  text-align: center;
+  transition: transform .2s ease;
+}
+
+.multiselect__select:before {
+  position: relative;
+  right: 0;
+  top: 65%;
+  color: #999;
+  margin-top: 4px;
+  border-style: solid;
+  border-width: 5px 5px 0;
+  border-color: #999 transparent transparent;
+  content: "";
+}
+
+.multiselect__placeholder {
+  color: #adadad;
+  display: inline-block;
+  margin-bottom: 10px;
+  padding-top: 2px;
+}
+
+.multiselect--active .multiselect__placeholder {
+  display: none;
+}
+
+.multiselect__content-wrapper {
+  position: absolute;
+  display: block;
+  background: #fff;
+  width: 100%;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #e8e8e8;
+  border-top: none;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  z-index: 1;
+  -webkit-overflow-scrolling: touch;
+}
+
+.multiselect__content {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  min-width: 100%;
+  vertical-align: top;
+}
+
+.multiselect--above .multiselect__content-wrapper {
+  bottom: 100%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom: none;
+  border-top: 1px solid #e8e8e8;
+}
+
+.multiselect__content::webkit-scrollbar {
+  display: none;
+}
+
+.multiselect__element {
+  display: block;
+}
+
+.multiselect__option {
+  display: block;
+  padding: 12px;
+  min-height: 40px;
+  line-height: 16px;
+  text-decoration: none;
+  text-transform: none;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.multiselect__option:after {
+  top: 0;
+  right: 0;
+  position: absolute;
+  line-height: 40px;
+  padding-right: 12px;
+  padding-left: 20px;
+}
+
+.multiselect__option--highlight {
+  background: #41b883;
+  outline: none;
+  color: #fff;
+}
+
+.multiselect__option--highlight:after {
+  content: attr(data-select);
+  background: #41b883;
+  color: #fff;
+}
+
+.multiselect__option--selected {
+  background: #f3f3f3;
+  color: #35495e;
+  font-weight: 700;
+}
+
+.multiselect__option--selected:after {
+  content: attr(data-selected);
+  color: silver;
+}
+
+.multiselect__option--selected.multiselect__option--highlight {
+  background: #ff6a6a;
+  color: #fff;
+}
+
+.multiselect__option--selected.multiselect__option--highlight:after {
+  background: #ff6a6a;
+  content: attr(data-deselect);
+  color: #fff;
+}
+
+.multiselect--disabled {
+  background: #ededed;
+  pointer-events: none;
+}
+
+.multiselect--disabled .multiselect__current,
+.multiselect--disabled .multiselect__select,
+.multiselect__option--disabled {
+  background: #ededed;
+  color: #a6a6a6;
+}
+
+.multiselect__option--disabled {
+  cursor: text;
+  pointer-events: none;
+}
+
+.multiselect__option--disabled.multiselect__option--highlight {
+  background: #dedede!important;
+}
+
+.multiselect-enter-active,
+.multiselect-leave-active {
+  transition: all .15s ease;
+}
+
+.multiselect-enter,
+.multiselect-leave-active {
+  opacity: 0;
+}
+
+.multiselect__strong {
+  margin-bottom: 8px;
+  line-height: 20px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+[dir=rtl] .multiselect {
+  text-align: right;
+}
+
+[dir=rtl] .multiselect__select {
+  right: auto;
+  left: 1px;
+}
+
+[dir=rtl] .multiselect__tags {
+  padding: 8px 8px 0 40px;
+}
+
+[dir=rtl] .multiselect__content {
+  text-align: right;
+}
+
+[dir=rtl] .multiselect__option:after {
+  right: auto;
+  left: 0;
+}
+
+[dir=rtl] .multiselect__clear {
+  right: auto;
+  left: 12px;
+}
+
+[dir=rtl] .multiselect__spinner {
+  right: auto;
+  left: 1px;
+}
+
+@keyframes a {
+  0% {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(2turn);
+  }
+}</style><style type="text/css">
+#free-reward-panel .reward-users-modal main {
+  padding: 0;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.reward-note-modal .v-modal {
+  width: 620px;
+  text-align: center;
+}
+.reward-note-modal .v-modal form {
+    margin: 0 auto 25px auto;
+    padding: 0 40px;
+}
+.reward-note-modal .v-modal .reward-intro {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+.reward-note-modal .v-modal .reward-intro .avatar {
+      cursor: default !important;
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+      display: inline-block;
+}
+.reward-note-modal .v-modal .reward-intro .intro {
+      margin-right: 5px;
+      font-weight: bold;
+      vertical-align: middle;
+}
+.reward-note-modal .v-modal .reward-intro i {
+      color: #EA6F5A;
+      vertical-align: middle;
+}
+.reward-note-modal .v-modal .main-inputs {
+    margin: 25px 0;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group {
+      margin: 0 -5px;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group input {
+        display: none;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group input:checked + .option {
+        color: #EA6F5A;
+        border-color: #EA6F5A;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .custom-amount:checked + .option .custom-text {
+        opacity: 0;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .custom-amount:checked + .option .custom-amount-input {
+        opacity: 1;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option {
+        position: relative;
+        margin: 0 5px 15px;
+        width: 156px;
+        height: 56px;
+        line-height: 54px;
+        border: 1px solid #E6E6E6;
+        border-radius: 4px;
+        font-weight: normal;
+        color: #999999;
+        cursor: pointer;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option i {
+          font-size: 16px;
+          vertical-align: middle;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .amount {
+          font-size: 28px;
+          vertical-align: middle;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .piece {
+          font-size: 13px;
+          vertical-align: sub;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input {
+          position: absolute;
+          top: 0;
+          z-index: -1;
+          width: 100%;
+          opacity: 0;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input i {
+            position: absolute;
+            top: 0;
+            left: 10px;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input .piece {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input input {
+            display: block;
+            margin: 0 auto;
+            width: 80px;
+            height: 54px;
+            line-height: 54px;
+            border: none;
+            font-size: 28px;
+            text-align: center;
+            background: transparent;
+            -moz-appearance: textfield;
+}
+.reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input input::-webkit-outer-spin-button, .reward-note-modal .v-modal .main-inputs .amount-group .option .custom-amount-input input::-webkit-inner-spin-button {
+              -webkit-appearance: none !important;
+}
+.reward-note-modal .v-modal .main-inputs .message {
+      padding: 15px 20px;
+      margin-bottom: 0;
+      font-size: 14px;
+      border: 1px solid #E6E6E6;
+      color: #333333;
+      border-radius: 4px;
+      background-color: rgba(180, 180, 180, 0.1);
+}
+.reward-note-modal .v-modal .main-inputs .message textarea {
+        width: 100%;
+        height: 44px;
+        padding: 0;
+        margin: 0;
+        resize: none;
+        background: none !important;
+        border: none !important;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        -webkit-box-shadow: none;
+                box-shadow: none;
+}
+.reward-note-modal .v-modal .main-inputs .message textarea:focus {
+          outline: none;
+}
+.reward-note-modal .v-modal .reward-info .amount {
+    font-size: 28px;
+    font-weight: bold;
+    color: #EA6F5A;
+}
+.reward-note-modal .v-modal .reward-info .pay-method {
+    font-size: 14px;
+}
+.reward-note-modal .v-modal .reward-info .pay-method a {
+      color: #3194D0;
+}
+.reward-note-modal .v-modal .choose-pay {
+    margin: 0 -5px;
+}
+.reward-note-modal .v-modal .choose-pay input {
+      display: none;
+}
+.reward-note-modal .v-modal .choose-pay input:checked + .option {
+      color: #EA6F5A;
+      border-color: #EA6F5A;
+}
+.reward-note-modal .v-modal .choose-pay .option {
+      margin: 20px 5px 10px;
+      width: 156px;
+      height: 56px;
+      line-height: 54px;
+      text-align: center;
+      border: 1px solid #E6E6E6;
+      border-radius: 4px;
+      cursor: pointer;
+}
+.reward-note-modal .v-modal .choose-pay .option img {
+        height: 30px;
+}
+.reward-note-modal .v-modal .choose-pay .option img.day.alipay, .reward-note-modal .v-modal .choose-pay .option img.night.alipay {
+        min-width: 85px;
+}
+.reward-note-modal .v-modal .choose-pay .option img.day.wechat, .reward-note-modal .v-modal .choose-pay .option img.night.wechat {
+        min-width: 112px;
+}
+.reward-note-modal .v-modal .choose-pay .option img.night {
+        display: none;
+}
+body.reader-night-mode .reward-note-modal .v-modal .choose-pay .option img.night {
+        display: inline-block;
+}
+body.reader-night-mode .reward-note-modal .v-modal .choose-pay .option img.day {
+        display: none;
+}
+.reward-note-modal .v-modal .choose-pay .tooltip {
+      width: 230px;
+}
+.reward-note-modal .v-modal .modal-footer {
+    padding: 0 15px 20px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+}
+.reward-note-modal .v-modal .modal-footer .btn {
+      padding: 8px 45px;
+      font-size: 24px;
+}
+.reward-note-modal .v-modal .btn-pay {
+    padding: 8px 25px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #F5A623;
+}
+.weixin-pay, .success-pay {
+  text-align: center;
+}
+.weixin-pay .v-modal, .success-pay .v-modal {
+    width: 350px;
+}
+.weixin-pay .ic-successed, .success-pay .ic-successed {
+    font-size: 60px;
+    color: #3db922;
+}
+.weixin-pay h2, .weixin-pay h3, .success-pay h2, .success-pay h3 {
+    margin-bottom: 20px;
+    color: #333333;
+}
+.weixin-pay h2, .success-pay h2 {
+    margin: 0 0 40px 0;
+    font-size: 24px;
+}
+.weixin-pay .bind-text, .success-pay .bind-text {
+    position: relative;
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: #999999;
+}
+.weixin-pay .bind-text:before, .weixin-pay .bind-text:after, .success-pay .bind-text:before, .success-pay .bind-text:after {
+      content: "";
+      border-top: 1px solid #999;
+      display: block;
+      position: absolute;
+      width: 40px;
+      top: 8px;
+}
+.weixin-pay .bind-text:before, .success-pay .bind-text:before {
+      left: 30px;
+}
+.weixin-pay .bind-text:after, .success-pay .bind-text:after {
+      right: 30px;
+}
+.weixin-pay .share-bind, .success-pay .share-bind {
+    display: block;
+    margin-bottom: 30px;
+}
+.weixin-pay .share-bind i, .success-pay .share-bind i {
+      margin-right: 4px;
+      font-size: 22px;
+      vertical-align: middle;
+}
+.weixin-pay .share-bind.wechat i, .success-pay .share-bind.wechat i {
+      color: #00BB29;
+}
+.weixin-pay .share-bind.weibo i, .success-pay .share-bind.weibo i {
+      color: #E05244;
+}
+.weixin-pay .wx-qr-code, .success-pay .wx-qr-code {
+    display: inline-block;
+}
+.weixin-pay .wx-qr-code img, .success-pay .wx-qr-code img {
+      margin: 0 auto;
+      padding: 10px;
+      width: 200px;
+      background-color: #ffffff;
+}
+.weixin-pay .pay-amount, .success-pay .pay-amount {
+    margin: 20px 0;
+    color: #787878;
+}
+.weixin-pay .pay-amount span, .success-pay .pay-amount span {
+      color: #F5A623;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.v-modal-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: transparent;
+}
+.v-modal-wrap.modal-leave-active {
+    -webkit-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+}
+.v-modal-wrap.modal-enter-active .v-modal-mask, .v-modal-wrap.modal-leave-active .v-modal-mask {
+    opacity: 0;
+}
+.v-modal-wrap.modal-enter-active .v-modal, .v-modal-wrap.modal-leave-active .v-modal {
+    -webkit-transform: translate(-50%, -70%);
+        -ms-transform: translate(-50%, -70%);
+            transform: translate(-50%, -70%);
+    opacity: 0;
+}
+.v-modal-wrap .v-modal-mask {
+    background-color: rgba(255, 255, 255, 0.7);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    -webkit-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+    opacity: 1;
+}
+.v-modal-wrap .v-modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    -webkit-box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+    transition: opacity 0.3s, -webkit-transform 0.3s;
+    -o-transition: opacity 0.3s, transform 0.3s;
+    transition: opacity 0.3s, transform 0.3s;
+    transition: opacity 0.3s, transform 0.3s, -webkit-transform 0.3s;
+    opacity: 1;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    overflow: hidden;
+}
+.v-modal-wrap .v-modal > header:before, .v-modal-wrap .v-modal > header:after, .v-modal-wrap .v-modal > main:before, .v-modal-wrap .v-modal > main:after, .v-modal-wrap .v-modal > footer:before, .v-modal-wrap .v-modal > footer:after {
+      content: '';
+      clear: both;
+      display: table;
+}
+.v-modal-wrap .v-modal > header {
+      padding: 20px;
+      border-bottom: 1px solid #F0F0F0;
+}
+.v-modal-wrap .v-modal > header h4 {
+        margin: 0;
+        color: #333;
+        text-align: left;
+}
+.v-modal-wrap .v-modal .close {
+      position: absolute;
+      right: 16px;
+      top: 20px;
+      font-size: 26px;
+      line-height: 20px;
+      color: rgba(0, 0, 0, 0.8);
+}
+.v-modal-wrap .v-modal .close:hover {
+        color: #000000;
+}
+.v-modal-wrap .v-modal > main {
+      padding: 20px 20px 20px 20px;
+      font-size: 15px;
+      color: #333;
+      -webkit-box-flex: 1;
+      -webkit-flex-grow: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
+      overflow-x: hidden;
+      overflow-y: auto;
+}
+.v-modal-wrap .v-modal > footer {
+      padding: 20px;
+      background-color: #fff;
+}
+.v-modal-wrap .v-modal > footer button {
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        border: 0;
+        float: right;
+}
+.v-modal-wrap .v-modal > footer button:focus {
+          outline: 0;
+}
+.v-modal-wrap .v-modal > footer .submit {
+        padding: 4px 12px;
+        border: 1px solid;
+        border-radius: 20px;
+}
+.v-modal-wrap .v-modal > footer .cancel {
+        margin-top: 5px;
+}
+.v-modal-wrap .v-modal > footer .cancel:hover {
+          color: #333333;
+}
+.reader-night-mode .v-modal-wrap .v-modal-mask {
+  background-color: rgba(63, 63, 63, 0.7);
+}
+.reader-night-mode .v-modal-wrap .v-modal {
+  background-color: #3f3f3f;
+}
+.reader-night-mode .v-modal-wrap .v-modal header {
+    border-color: #2F2F2F;
+}
+.reader-night-mode .v-modal-wrap .v-modal header h4 {
+      color: #C8C8C8;
+}
+.reader-night-mode .v-modal-wrap .v-modal .close {
+    color: #C8C8C8;
+}
+.reader-night-mode .v-modal-wrap .v-modal .close:hover {
+      color: #ffffff;
+}
+.reader-night-mode .v-modal-wrap .v-modal main {
+    color: #C8C8C8;
+}
+.reader-night-mode .v-modal-wrap .v-modal footer {
+    background-color: #3f3f3f;
+}
+.reader-night-mode .v-modal-wrap .v-modal footer .cancel:hover {
+      color: #C8C8C8;
+}
+</style><style type="text/css">
+.nqzzJ71pC-jOnJKAfdtr6_0 {
+  float: right;
+  height: 55px;
+  padding: 15px 0px;
+  margin: 0 12px;
+}
+._3tScN0zmSdGLaUAH4SxTbM_0 {
+    width: 100%;
+    height: 100%;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._3f806byixOPpOPWnx8HiQP_0 {
+    height: 25px;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._2MIQ6sBppQZAKea91We0qf_0 {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.6;
+    z-index: 1000;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 {
+    position: fixed;
+    left: -webkit-calc( 50% - 190px);
+    left: calc( 50% - 190px);
+    top: -webkit-calc( 50% - 300px);
+    top: calc( 50% - 300px);
+    width: 380px;
+    height: 425px;
+    background-color: #fff;
+    padding: 40px 72px 0;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    z-index: 1000;
+    text-align: center;
+}
+body.reader-night-mode .nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 {
+      background-color: #3f3f3f;
+      color: #c8c8c8;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 h4 {
+      margin: 0;
+      line-height: 25px;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 h4 span {
+        color: #e9634c;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 img {
+      width: 190px;
+      height: 190px;
+      margin: 12px 0 8px 0;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 p {
+      font-size: 14px;
+      line-height: 20px;
+      margin: 0;
+}
+.nqzzJ71pC-jOnJKAfdtr6_0 ._1RppgOJ_CQiXgzd3ke-sbJ_0 ._2WUz9DZJO5DIC_O5sD1kac_0 {
+      background-color: #e9634c;
+      color: #fff;
+      margin: 25px auto 0;
+      width: 190px;
+      height: 40px;
+      border-radius: 20px;
+      line-height: 40px;
+      font-size: 14px;
+      cursor: pointer;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.youdao-fixed-ad {
+  display: block;
+  position: relative;
+  width: 180px;
+  height: 180px;
+  border: 1px solid #e8eae9;
+}
+.youdao-fixed-ad .img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.youdao-fixed-ad .ad-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: block;
+    font-size: 12px;
+    padding: 2px 5px 0 6px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    cursor: pointer;
+}
+.qingteng-ads {
+  border: 1px solid #e8e8e8;
+  width: 180px;
+}
+</style><style type="text/css">
+.yuxi-fixed-ad {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+.yuxi-fixed-ad .img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-image: url(//cdn2.jianshu.io/assets/web/yuxi-ads-d73b364baf42dfeca32d518c819a0136.jpg);
+}
+.yuxi-fixed-ad .ad-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: block;
+    font-size: 12px;
+    padding: 2px 5px 0 6px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    cursor: pointer;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.like[data-v-6ddd02c6] {
+  display: inline-block;
+}
+.like .like-group[data-v-6ddd02c6] {
+    position: relative;
+    padding: 13px 0 15px 0;
+    font-size: 0;
+    border: 1px solid #EA6F5A;
+    border-radius: 40px;
+}
+.like .like-group[data-v-6ddd02c6]:hover {
+      background-color: rgba(236, 97, 73, 0.05);
+}
+.like .like-group .btn-like[data-v-6ddd02c6] {
+      display: inline-block;
+      font-size: 19px;
+}
+.like .like-group .btn-like[data-v-6ddd02c6]:before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 2px;
+        width: 50px;
+        height: 50px;
+        background-image: url(//cdn2.jianshu.io/assets/web/like_animation_steps-62a00a7b52377d3069927cdb8e61fd34.png);
+        background-position: left;
+        background-repeat: no-repeat;
+        background-size: 1000px 50px;
+}
+.like .like-group .btn-like a[data-v-6ddd02c6] {
+        position: relative;
+        padding: 18px 30px 18px 55px;
+        color: #EA6F5A;
+}
+.like .like-group .modal-wrap[data-v-6ddd02c6] {
+      font-size: 18px;
+      border-left: 1px solid rgba(236, 97, 73, 0.4);
+      display: inline-block;
+      margin-left: -15px;
+}
+.like .like-group .modal-wrap a[data-v-6ddd02c6] {
+        color: #EA6F5A;
+        padding: 18px 26px 18px 18px;
+}
+.like .like-group.like-animation[data-v-6ddd02c6], .like .like-group.active[data-v-6ddd02c6] {
+      background-color: #EA6F5A;
+}
+.like .like-group.like-animation .btn-like a[data-v-6ddd02c6], .like .like-group.active .btn-like a[data-v-6ddd02c6] {
+        color: white;
+}
+.like .like-group.like-animation .modal-wrap[data-v-6ddd02c6], .like .like-group.active .modal-wrap[data-v-6ddd02c6] {
+        border-left: 1px solid white;
+}
+.like .like-group.like-animation .modal-wrap a[data-v-6ddd02c6], .like .like-group.active .modal-wrap a[data-v-6ddd02c6] {
+          color: white;
+}
+.like .like-group.like-animation .btn-like[data-v-6ddd02c6]:before {
+      -webkit-animation: likeBlast-data-v-6ddd02c6 0.6s 1 steps(19);
+              animation: likeBlast-data-v-6ddd02c6 0.6s 1 steps(19);
+      background-position: right;
+}
+@-webkit-keyframes likeBlast {
+0% {
+    background-position: left;
+}
+100% {
+    background-position: right;
+}
+}
+@keyframes likeBlast-data-v-6ddd02c6 {
+0% {
+    background-position: left;
+}
+100% {
+    background-position: right;
+}
+}
+.like .like-group.active .btn-like[data-v-6ddd02c6]:before {
+      background-position: right;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.main {
+  position: relative;
+  margin: 0 auto;
+  padding: 0 0 30px 0;
+  width: 620px;
+}
+.main .title {
+    padding-left: 8px;
+    border-left: 3px solid #EA6F5A;
+    line-height: 1;
+    font-size: 15px;
+}
+.main .collection-settings {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    font-size: 13px;
+    color: #A0A0A0;
+}
+.main .collection-settings span {
+      padding-left: 4px;
+}
+.main .include-collection {
+    width: 100%;
+    padding-top: 20px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+}
+.main .include-collection .item {
+      display: inline-block;
+      margin: 0 12px 12px 0;
+      min-height: 32px;
+      background-color: white;
+      border: 1px solid #DCDCDC;
+      border-radius: 4px;
+      vertical-align: top;
+      overflow: hidden;
+}
+.main .include-collection .item img {
+        width: 32px;
+        height: 32px;
+}
+.main .include-collection .item .name {
+        display: inline-block;
+        padding: 0 10px;
+        font-size: 14px;
+}
+.main .include-collection .add-collection-wrap {
+      margin: 0 12px 12px 0;
+}
+.main .include-collection .add-collection {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #DCDCDC;
+      border-radius: 4px;
+}
+.main .include-collection .add-collection i {
+        margin-right: 4px;
+        color: #969696;
+}
+.main .recommend-note a {
+    position: relative;
+    margin: 20px 2px 0 0;
+    width: 200px;
+    height: 160px;
+    display: inline-block;
+}
+.main .recommend-note a:after {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 160px;
+      border-radius: 0 0 4px 4px;
+      -webkit-box-shadow: inset 0px -80px 50px -22px rgba(0, 0, 0, 0.6);
+              box-shadow: inset 0px -80px 50px -22px rgba(0, 0, 0, 0.6);
+      top: 0;
+      left: 0;
+      z-index: 1;
+}
+.main .recommend-note .name {
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    right: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #ffffff;
+    z-index: 2;
+}
+.main .recommend-note .author {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 2;
+}
+.main .recommend-note .avatar {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+.main .recommend-note .avatar img {
+      border-radius: 50%;
+}
+.main .recommend-note .author-name {
+    font-size: 12px;
+    color: #ffffff;
+    display: inline-block;
+    vertical-align: -1px;
+}
+.main .show-more {
+    margin: 0 12px 12px 0;
+    font-size: 14px;
+    color: #A0A0A0;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.recommend-note {
+  margin-bottom: 20px;
+}
+.recommend-note .meta, .recommend-note .list {
+    width: 620px;
+    margin: 0 auto;
+}
+.recommend-note .meta .title {
+    padding-left: 8px;
+    border-left: 3px solid #EA6F5A;
+    line-height: 1;
+    font-size: 15px;
+}
+.recommend-note .meta .title .more {
+      float: right;
+      font-size: 14px;
+      color: #A0A0A0;
+}
+.recommend-note .list {
+    margin-top: 20px;
+}
+.recommend-note .list .note {
+      display: block;
+      margin-bottom: 25px;
+      padding: 0 0 25px 0;
+      border-bottom: 1px solid #DDDDDD;
+}
+.recommend-note .list .note.have-img {
+        min-height: 136px;
+}
+.recommend-note .list .note.have-img.no-user .description {
+          -webkit-line-clamp: 3;
+}
+.recommend-note .list .note .cover {
+        float: right;
+        margin: -5px 0 0 15px;
+        width: 150px;
+        height: 120px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: 6px;
+}
+.recommend-note .list .note .title {
+        display: inherit;
+        margin-bottom: 4px;
+        font-size: 18px;
+        line-height: 27px;
+        font-weight: bold;
+        color: #333333;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+           text-overflow: ellipsis;
+        white-space: nowrap;
+}
+.recommend-note .list .note .title:hover {
+          text-decoration: underline;
+}
+.recommend-note .list .note .title:visited {
+          color: #999999;
+}
+.recommend-note .list .note .description {
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 23px;
+        color: #333333;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+           text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+}
+.recommend-note .list .note .author .avatar {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin-right: 3px;
+        border-radius: 50%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        vertical-align: middle;
+}
+.recommend-note .list .note .author .name {
+        font-size: 13px;
+        color: #333333;
+        vertical-align: middle;
+}
+</style><style type="text/css">
+#featured-comment-list {
+  margin-top: 30px;
+  margin-bottom: -15px;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.pc-bind-phone-modal .modal-content, .pc-bind-phone-modal .modal-body {
+  overflow: visible;
+}
+.pc-bind-phone-modal .modal-body {
+  padding-top: 14px;
+}
+.pc-bind-phone-modal .dropdown-menu {
+  max-height: 300px;
+  overflow: auto;
+}
+.pc-bind-phone-modal .dropdown-menu .tag {
+    background-color: #efefef;
+    color: #4A4A4A;
+    height: 28px;
+    line-height: 28px;
+    padding-left: 25px;
+    font-size: 12px;
+}
+.pc-bind-phone-modal .tips {
+  color: #999999;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  margin-bottom: 14px;
+}
+.pc-bind-phone-modal .tips a {
+    color: #3194D0;
+}
+.reader-night-mode .pc-bind-phone-modal .dropdown-menu .tag {
+  background-color: #2F2F2F;
+  color: #999999;
+}
+</style><style type="text/css">
+@charset "UTF-8";
+/*
+ * 变量
+*/
+.youdao-recommended-ad {
+  position: relative;
+  display: block;
+}
+.youdao-recommended-ad .img {
+    display: block;
+    float: right;
+    width: 150px;
+    height: 120px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: RGB(241, 243, 244);
+    border-radius: 6px;
+    margin: -5px 0 0 15px;
+}
+body.reader-night-mode .youdao-recommended-ad .img {
+      background-color: #4f4f4f;
+}
+.youdao-recommended-ad .info {
+    overflow: hidden;
+}
+.youdao-recommended-ad .info .title {
+      display: block;
+      color: #333;
+      line-height: 27px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: -4px;
+      cursor: pointer;
+}
+body.reader-night-mode .youdao-recommended-ad .info .title {
+        color: #969696;
+}
+.youdao-recommended-ad .info .intro {
+      display: block;
+      font-size: 13px;
+      color: #999;
+      overflow: hidden;
+      -o-text-overflow: ellipsis;
+         text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 24px;
+      max-height: 48px;
+      -webkit-box-sizing: content-box;
+              box-sizing: content-box;
+      white-space: normal;
+}
+.youdao-recommended-ad .info .ad-badge {
+      position: absolute;
+      left: 0;
+      top: 95px;
+      display: block;
+      width: 38px;
+      height: 18px;
+      line-height: 16px;
+      text-align: center;
+      border-radius: 2px;
+      border: solid 1px #999999;
+      color: #999999;
+      font-size: 12px;
+}
+</style></head>
+
+  <!-- 只给10%的用户添加代码 -->
+  <!-- ###第四范式-智能推荐：代码直接复制 无需修改参数### -->
+  <!-- ###功能：上报内容并反馈用户行为### -->
+  <!--
+  -->
+  <body lang="zh-CN" class="reader-black-font">
+    <!-- 全局顶部导航栏 -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="width-limit">
+    <!-- 左上方 Logo -->
+    <a class="logo" href="https://www.jianshu.com/"><img src="./JMM和底层实现原理 - 简书_files/nav-logo-4c7bbafe27adc892f3046e6978459bac.png" alt="Nav logo"></a>
+
+    <!-- 右上角 -->
+      <!-- 未登录显示登录/注册/写文章 -->
+      <a class="btn write-btn" target="_blank" href="https://www.jianshu.com/writer#/">
+        <i class="iconfont ic-write"></i>写文章
+</a>      <a class="btn sign-up" id="sign_up" href="https://www.jianshu.com/sign_up">注册</a>
+      <a class="btn log-in" id="sign_in" href="https://www.jianshu.com/sign_in">登录</a>
+
+    <!-- 如果用户登录，显示下拉菜单 -->
+
+    <div class="nqzzJ71pC-jOnJKAfdtr6_0"><a class="_3tScN0zmSdGLaUAH4SxTbM_0"><img src="./JMM和底层实现原理 - 简书_files/nav_jsds_beta-eeb44d165b8ba37680fdb7e65ae17ae4.png" class="_3f806byixOPpOPWnx8HiQP_0"></a> <!----></div>
+
+    <div class="style-mode"><a class="style-mode-btn"><i class="iconfont ic-navigation-mode"></i></a> <div class="popover-modal" style="left: 0px; display: none;"><div class="meta"><i class="iconfont ic-navigation-night"></i><span>夜间模式</span></div> <div class="switch day-night-group"><a class="switch-btn">开</a> <a class="switch-btn active">关</a></div> <hr> <div class="switch font-family-group"><a class="switch-btn font-song">宋体</a> <a class="switch-btn font-hei active">黑体</a></div> <div class="switch"><a class="switch-btn active">简</a> <a class="switch-btn">繁</a></div></div></div>
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="nav navbar-nav">
+            <li class="tab ">
+              <a href="https://www.jianshu.com/">
+                <span class="menu-text">首页</span><i class="iconfont ic-navigation-discover menu-icon"></i>
+</a>            </li>
+            <li class="tab ">
+              <a id="web-nav-app-download-btn" class="app-download-btn" href="https://www.jianshu.com/apps?utm_medium=desktop&amp;utm_source=navbar-apps"><span class="menu-text">下载App</span><i class="iconfont ic-navigation-download menu-icon"></i></a>
+            </li>
+          <li class="search">
+            <form target="_blank" action="https://www.jianshu.com/search" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="✓">
+              <input type="text" name="q" id="q" value="" autocomplete="off" placeholder="搜索" class="search-input">
+              <a class="search-btn" href="javascript:void(null)"><i class="iconfont ic-search"></i></a>
+</form>          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="note">
+  <div id="note-fixed-ad-container">
+    <div id="fixed-ad-container">
+      <div style="display: block;"><a target="_blank" href="https://www.jianshu.com/apps/redirect?utm_source=side-banner-click" id="web-note-ad-fixed"><span class="close">×</span></a></div>
+      <div><a href="https://log-yex.youdao.com/ct?slot=30edd91dd8637d9f645baa8448ba90b3&amp;youdao_bid=77591fad-222e-487a-97fd-85bc9a2658f5&amp;yexi=909205b69a969d331024ef8d7a883e10&amp;yexcb=aZVQECsx3bt56tGDnCqIql3sjLyS5kdEsT--bAgtHHMXWOcuSEeFw76fNbuQJNra0wXbcr0kbG6YyKVl0EsxfIdjeN-c2AKQu0j_CM2eu1CEIAU0KmhMuReN009RK5T76p5yaFo2Xp3VZGxZdu90t3IJ-89CKWaKlM9kZf5tBCtjYbTxgs9P8EDhO2uXZxTpBcp2HjUvQXhgCwrw6xbdng&amp;yexr=https%3A%2F%2Fdsp-click.youdao.com%2Fclk%2Frequest.s%3Fk%3DdVNyNP8LN7V7Jt9G88nVoKNjlkssoGDIWc1O3YhB%252BlvXxo%252BoRxcJpjjAgKuViCqvIxCHqA9N%252F2c%252F9Be%252FcwcSrx737stZtEL2EDAuqrnIM85XsLGHNxTQ%252Fh0SUi393U9MgF%252BEamRbYJ0OecRzIcDeSoPOuKdZAy8sBynigxH0FV19ulwGOtM6TkpTud7OQM2GleI5oPzmd2QgtkoS%252FAS6y%252BsTFzqZurDJH6ab%252B8Dlv31PE6kE1ZZZJWe7ecvmgYnv0vcuFPN9RPx5aO%252FYTNm4%252FFkxiRwcxgjrh%252BJB0yd2bRMZebL2zJpnw3L%252FaFDfeEV%252FePsf1jAUrA4yyivfnY3gRamBAVsqaOONP0kG0ukmlt2c8W0VVH1DomVi0NECXdByDXbcUnWDK1ziot6Afk1JPQn1ysb88cTcky%252Ffe5Vi8VU8wJGOQ0HjrFUlnJrmNACAaH3a5BxxIlwQ2%252BMheupEvbKADwa72na7W0DMzOVIgny2gcbSz6c5DjUEhuPMmVbFa%252FZizuROZCyblVyJAJdvDxpgOW%252Fa8tzrla5zJN2Kj%252FmHOGHpgJlkiajKSyewyk%252FPpiN16IK%252BL%252F5LmhFeRngVwAhNejwI7tWIDXqh2eOLl7NagJZc5EpJoDWTdwI2nJ3DSDKGc0O8kwPJ8jr3BDMxoQ%252BjarRGjKVvNrFI7%252FVtPB4nksseOJ%252BHt3AJsgZySbbN6tqee%252B26xseTZvZto2gUbuXfJxhJIkxogR11XGZMRcC8uIYFY2CXlmvAFPt8C9LzDG4CMXinSn2UyuMiBnsWQhRW1jHF%252B2Pauy6AjeO8GKHmhr3l8lSWuc66YyzjX9VB3A3OVbb4T8GZiwhLNumPWZXm1xzsGdbKSjUoBKVNLaIAZFExjWnwbvIE2iOr14QuLeJCHRqOzKvQMWxcJFxa8sJNv4VwU3%252FhpZua1q27liEogqj2jUr%252F3wfGm9mnJui8bPqne3uWiZs%252FferXEHE2a21oEpFxYKnLdIbWQpItY5CdRQuWaRkcmhbowM8ljvuW18aPqEcXCaY4wICrlYgqr9fGj6hHFwmmOMCAq5WIKq%252FXxo%252BoRxcJpjjAgKuViCqvkY96duCVycaDMDFalyBIFw%253D%253D%26isrd%3D1%26youdao_bid%3D77591fad-222e-487a-97fd-85bc9a2658f5&amp;iid=%7B%22-2918506698115627436%22%3A4%7D&amp;sid=17024" target="_blank" class="youdao-fixed-ad"><div class="img" style="background-image: url(&quot;https://oimageb8.ydstatic.com/image?id=-2918506698115627436&amp;product=adpublish&amp;w=360&amp;h=360&amp;sc=0&amp;rm=2&amp;gsb=0&amp;gsbd=60&quot;);"></div> <span class="ad-badge">广告</span></a> <!----></div>
+      <a href="http://e.cn.miaozhen.com/r/k=2110413&amp;p=7L9Gn&amp;dx=__IPDX__&amp;rt=2&amp;ns=__IP__&amp;ni=__IESID__&amp;v=__LOC__&amp;xa=__ADPLATFORM__&amp;tr=__REQUESTID__&amp;mo=__OS__&amp;m0=__OPENUDID__&amp;m0a=__DUID__&amp;m1=__ANDROIDID1__&amp;m1a=__ANDROIDID__&amp;m2=__IMEI__&amp;m4=__AAID__&amp;m5=__IDFA__&amp;m6=__MAC1__&amp;m6a=__MAC__&amp;vo=3f2e070eb&amp;vr=2&amp;o=https%3A%2F%2Fwww.jianshu.com%2Fp%2Fee05f7eff678" target="_blank" class="yuxi-fixed-ad" style="display: none;"><div class="img"></div> <span class="ad-badge">广告</span></a>
+       <div id="zhangxin-fixed-ad"></div>
+      <div id="_so_pdsBy_0"></div>
+    </div>
+  </div>
+  <div class="post">
+    <div class="article">
+        <h1 class="title">JMM和底层实现原理</h1>
+
+        <!-- 作者区域 -->
+        <div class="author">
+          <a class="avatar" href="https://www.jianshu.com/u/c253b01b2c35">
+            <img src="./JMM和底层实现原理 - 简书_files/58106418a060.jpg" alt="96">
+</a>          <div class="info">
+            <span class="name"><a href="https://www.jianshu.com/u/c253b01b2c35">王侦</a></span>
+              <img class="badge-icon" data-toggle="tooltip" title="" src="./JMM和底层实现原理 - 简书_files/b67c298d-f020-4f89-aac6-0710bc0709ec" alt="B67c298d f020 4f89 aac6 0710bc0709ec" data-original-title="日更达人">
+            <!-- 关注用户按钮 -->
+            <a class="btn btn-success follow"><i class="iconfont ic-follow"></i><span>关注</span></a>
+            <!-- 文章数据信息 -->
+            <div class="meta">
+              <!-- 简书钻 -->
+                <span class="jsd-meta">
+                  <i class="iconfont ic-paid1"></i> 1.4
+                </span>
+              <!-- 如果文章更新时间大于发布时间，那么使用 tooltip 显示更新时间 -->
+                <span class="publish-time" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="最后编辑于 2018.08.31 16:01">2018.08.31 15:04*</span>
+              <span class="wordage">字数 6337</span>
+            <span class="views-count">阅读 8494</span><span class="comments-count">评论 0</span><span class="likes-count">喜欢 16</span></div>
+          </div>
+          <!-- 如果是当前作者，加入编辑按钮 -->
+        </div>
+
+
+        <!-- 文章内容 -->
+        <div data-note-content="" class="show-content">
+          <div class="show-content-free">
+            <h1>1.并发编程领域的关键问题</h1>
+<h2>1.1 线程之间的通信</h2>
+<p>线程的通信是指线程之间以何种机制来交换信息。在编程中，线程之间的通信机制有两种，共享内存和消息传递。<br>
+在共享内存的并发模型里，线程之间共享程序的公共状态，线程之间通过写-读内存中的公共状态来隐式进行通信，典型的共享内存通信方式就是通过共享对象进行通信。<br>
+在消息传递的并发模型里，线程之间没有公共状态，线程之间必须通过明确的发送消息来显式进行通信，在java中典型的消息传递方式就是wait()和notify()。</p>
+<h2>1.2 线程间的同步</h2>
+<p>同步是指程序用于控制不同线程之间操作发生相对顺序的机制。<br>
+在共享内存并发模型里，同步是显式进行的。程序员必须显式指定某个方法或某段代码需要在线程之间互斥执行。<br>
+在消息传递的并发模型里，由于消息的发送必须在消息的接收之前，因此同步是隐式进行的。</p>
+<h1>2.Java内存模型——JMM</h1>
+<ul>
+<li>Java的并发采用的是共享内存模型</li>
+</ul>
+<h2>2.1 现代计算机的内存模型</h2>
+<p>物理计算机中的并发问题，物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机对并发的处理方案对于虚拟机的实现也有相当大的参考意义。</p>
+<p>其中一个重要的复杂性来源是绝大多数的运算任务都不可能只靠处理器“计算”就能完成，处理器至少要与内存交互，如读取运算数据、存储运算结果等，这个I/O操作是很难消除的（无法仅靠寄存器来完成所有运算任务）。早期计算机中cpu和内存的速度是差不多的，但在现代计算机中，cpu的指令速度远超内存的存取速度,由于计算机的存储设备与处理器的运算速度有几个数量级的差距，所以现代计算机系统都不得不加入一层读写速度尽可能接近处理器运算速度的高速缓存（Cache）来作为内存与处理器之间的缓冲：将运算需要使用到的数据复制到缓存中，让运算能快速进行，当运算结束后再从缓存同步回内存之中，这样处理器就无须等待缓慢的内存读写了。</p>
+<p>基于高速缓存的存储交互很好地解决了处理器与内存的速度矛盾，但是也为计算机系统带来更高的复杂度，因为它引入了一个新的问题：缓存一致性（Cache Coherence）。在多处理器系统中，每个处理器都有自己的高速缓存，而它们又共享同一主内存（MainMemory）。当多个处理器的运算任务都涉及同一块主内存区域时，将可能导致各自的缓存数据不一致，举例说明变量在多个CPU之间的共享。如果真的发生这种情况，那同步回到主内存时以谁的缓存数据为准呢？为了解决一致性的问题，需要各个处理器访问缓存时都遵循一些协议，在读写时要根据协议来进行操作，这类协议有MSI、MESI（Illinois Protocol）、MOSI、Synapse、Firefly及Dragon Protocol等。</p>
+<div class="image-package">
+<div class="image-container" style="max-width: 494px; max-height: 490px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 99.19%;"></div>
+<div class="image-view" data-width="494" data-height="490"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-3560c4419496a1e0.png" data-original-width="494" data-original-height="490" data-original-format="image/png" data-original-filesize="247985" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-3560c4419496a1e0.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<div class="image-package">
+<div class="image-container" style="max-width: 562px; max-height: 342px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 60.85%;"></div>
+<div class="image-view" data-width="562" data-height="342"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-49df5535c55287c4.png" data-original-width="562" data-original-height="342" data-original-format="image/png" data-original-filesize="121707" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-49df5535c55287c4.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<ul>
+<li>该内存模型带来的问题<br>
+现代的处理器使用写缓冲区临时保存向内存写入的数据。写缓冲区可以保证指令流水线持续运行，它可以避免由于处理器停顿下来等待向内存写入数据而产生的延迟。同时，通过以批处理的方式刷新写缓冲区，以及合并写缓冲区中对同一内存地址的多次写，减少对内存总线的占用。虽然写缓冲区有这么多好处，但每个处理器上的写缓冲区，仅仅对它所在的处理器可见。这个特性会对内存操作的执行顺序产生重要的影响：处理器对内存的读/写操作的执行顺序，不一定与内存实际发生的读/写操作顺序一致！<br>
+处理器A和处理器B按程序的顺序并行执行内存访问，最终可能得到x=y=0的结果。<br>
+处理器A和处理器B可以同时把共享变量写入自己的写缓冲区（A1，B1），然后从内存中读取另一个共享变量（A2，B2），最后才把自己写缓存区中保存的脏数据刷新到内存中（A3，B3）。当以这种时序执行时，程序就可以得到x=y=0的结果。<br>
+从内存操作实际发生的顺序来看，直到处理器A执行A3来刷新自己的写缓存区，写操作A1才算真正执行了。虽然处理器A执行内存操作的顺序为：A1→A2，但内存操作实际发生的顺序却是A2→A1。</li>
+</ul>
+<div class="image-package">
+<div class="image-container" style="max-width: 607px; max-height: 197px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 32.45%;"></div>
+<div class="image-view" data-width="607" data-height="197"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-d78b62f3f76e868f.png" data-original-width="607" data-original-height="197" data-original-format="image/png" data-original-filesize="38676" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-d78b62f3f76e868f.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<div class="image-package">
+<div class="image-container" style="max-width: 574px; max-height: 428px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 74.56%;"></div>
+<div class="image-view" data-width="574" data-height="428"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-3be912b80cb3f99d.png" data-original-width="574" data-original-height="428" data-original-format="image/png" data-original-filesize="78808" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-3be912b80cb3f99d.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h2>2.2 Java内存模型（JMM）</h2>
+<p>JMM定义了Java 虚拟机(JVM)在计算机内存(RAM)中的工作方式。JVM是整个计算机虚拟模型，所以JMM是隶属于JVM的。从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存（Main Memory）中，每个线程都有一个私有的本地内存（Local Memory），本地内存中存储了该线程以读/写共享变量的副本。本地内存是JMM的一个抽象概念，并不真实存在。它涵盖了缓存、写缓冲区、寄存器以及其他的硬件和编译器优化。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 579px; max-height: 251px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 43.35%;"></div>
+<div class="image-view" data-width="579" data-height="251"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-96ca2a788ec29dc2.png" data-original-width="579" data-original-height="251" data-original-format="image/png" data-original-filesize="105615" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-96ca2a788ec29dc2.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h3>2.2.1 JVM对Java内存模型的实现</h3>
+<ul>
+<li>
+<p>在JVM内部，Java内存模型把内存分成了两部分：线程栈区和堆区<br>
+JVM中运行的每个线程都拥有自己的线程栈，线程栈包含了当前线程执行的方法调用相关信息，我们也把它称作调用栈。随着代码的不断执行，调用栈会不断变化。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 553px; max-height: 428px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 77.4%;"></div>
+<div class="image-view" data-width="553" data-height="428"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-4c8b73be388ed0f0.png" data-original-width="553" data-original-height="428" data-original-format="image/png" data-original-filesize="34064" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-4c8b73be388ed0f0.png"></div>
+</div>
+<div class="image-caption">image.png</div>
+</div>
+</li>
+</ul>
+<p>所有原始类型(boolean,byte,short,char,int,long,float,double)的局部变量都直接保存在线程栈当中，对于它们的值各个线程之间都是独立的。对于原始类型的局部变量，一个线程可以传递一个副本给另一个线程，当它们之间是无法共享的。<br>
+堆区包含了Java应用创建的所有对象信息，不管对象是哪个线程创建的，其中的对象包括原始类型的封装类（如Byte、Integer、Long等等）。不管对象是属于一个成员变量还是方法中的局部变量，它都会被存储在堆区。<br>
+一个局部变量如果是原始类型，那么它会被完全存储到栈区。 一个局部变量也有可能是一个对象的引用，这种情况下，这个本地引用会被存储到栈中，但是对象本身仍然存储在堆区。<br>
+对于一个对象的成员方法，这些方法中包含局部变量，仍需要存储在栈区，即使它们所属的对象在堆区。 对于一个对象的成员变量，不管它是原始类型还是包装类型，都会被存储到堆区。Static类型的变量以及类本身相关信息都会随着类本身存储在堆区。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 486px; max-height: 435px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 89.51%;"></div>
+<div class="image-view" data-width="486" data-height="435"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-1cc1cd7e5e09232c.png" data-original-width="486" data-original-height="435" data-original-format="image/png" data-original-filesize="29415" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-1cc1cd7e5e09232c.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h2>2.3 Java内存模型带来的问题</h2>
+<h3>2.3.1 可见性问题</h3>
+<p>CPU中运行的线程从主存中拷贝共享对象obj到它的CPU缓存，把对象obj的count变量改为2。但这个变更对运行在右边CPU中的线程不可见，因为这个更改还没有flush到主存中：要解决共享对象可见性这个问题，我们可以使用java volatile关键字或者是加锁</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 520px; max-height: 393px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 75.58%;"></div>
+<div class="image-view" data-width="520" data-height="393"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-58dbd966b4f80fab.png" data-original-width="520" data-original-height="393" data-original-format="image/png" data-original-filesize="25200" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-58dbd966b4f80fab.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h3>2.3.2 竞争现象</h3>
+<p>线程A和线程B共享一个对象obj。假设线程A从主存读取Obj.count变量到自己的CPU缓存，同时，线程B也读取了Obj.count变量到它的CPU缓存，并且这两个线程都对Obj.count做了加1操作。此时，Obj.count加1操作被执行了两次，不过都在不同的CPU缓存中。如果这两个加1操作是串行执行的，那么Obj.count变量便会在原始值上加2，最终主存中的Obj.count的值会是3。然而下图中两个加1操作是并行的，不管是线程A还是线程B先flush计算结果到主存，最终主存中的Obj.count只会增加1次变成2，尽管一共有两次加1操作。 要解决上面的问题我们可以使用java synchronized代码块。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 542px; max-height: 374px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 69.0%;"></div>
+<div class="image-view" data-width="542" data-height="374"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-0ad9904ab8a34470.png" data-original-width="542" data-original-height="374" data-original-format="image/png" data-original-filesize="24810" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-0ad9904ab8a34470.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h2>2.4 Java内存模型中的重排序</h2>
+<ul>
+<li>在执行程序时，为了提高性能，编译器和处理器常常会对指令做重排序。</li>
+</ul>
+<h3>2.4.1 重排序类型</h3>
+<div class="image-package">
+<div class="image-container" style="max-width: 700px; max-height: 154px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 15.02%;"></div>
+<div class="image-view" data-width="1025" data-height="154"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-0531c2c33ca2f3d2.png" data-original-width="1025" data-original-height="154" data-original-format="image/png" data-original-filesize="87708" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-0531c2c33ca2f3d2.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<ul>
+<li>1）编译器优化的重排序。编译器在不改变单线程程序语义的前提下，可以重新安排语句的执行顺序。</li>
+<li>2）指令级并行的重排序。现代处理器采用了指令级并行技术（Instruction-LevelParallelism，ILP）来将多条指令重叠执行。如果不存在数据依赖性，处理器可以改变语句对应机器指令的执行顺序。</li>
+<li>3）内存系统的重排序。由于处理器使用缓存和读/写缓冲区，这使得加载和存储操作看上去可能是在乱序执行。</li>
+</ul>
+<h3>2.4.2 重排序与依赖性</h3>
+<ul>
+<li>
+<p>数据依赖性<br>
+如果两个操作访问同一个变量，且这两个操作中有一个为写操作，此时这两个操作之间就存在数据依赖性。数据依赖分为下列3种类型，这3种情况，只要重排序两个操作的执行顺序，程序的执行结果就会被改变。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 554px; max-height: 237px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 42.78%;"></div>
+<div class="image-view" data-width="554" data-height="237"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-2c95d88191f5637b.png" data-original-width="554" data-original-height="237" data-original-format="image/png" data-original-filesize="42568" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-2c95d88191f5637b.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+</li>
+<li>
+<p>控制依赖性<br>
+flag变量是个标记，用来标识变量a是否已被写入，在use方法中比变量i依赖if (flag)的判断，这里就叫控制依赖，如果发生了重排序，结果就不对了。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 262px; max-height: 146px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 55.730000000000004%;"></div>
+<div class="image-view" data-width="262" data-height="146"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-459ed3ae17c6d8c2.png" data-original-width="262" data-original-height="146" data-original-format="image/png" data-original-filesize="13332" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-459ed3ae17c6d8c2.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+</li>
+<li>
+<p>as-if-serial<br>
+不管如何重排序，都必须保证代码在单线程下的运行正确，连单线程下都无法正确，更不用讨论多线程并发的情况，所以就提出了一个as-if-serial的概念。<br>
+as-if-serial语义的意思是：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。编译器、runtime和处理器都必须遵守as-if-serial语义。为了遵守as-if-serial语义，编译器和处理器不会对存在数据依赖关系的操作做重排序，因为这种重排序会改变执行结果。（强调一下，这里所说的数据依赖性仅针对单个处理器中执行的指令序列和单个线程中执行的操作，不同处理器之间和不同线程之间的数据依赖性不被编译器和处理器考虑。）但是，如果操作之间不存在数据依赖关系，这些操作依然可能被编译器和处理器重排序。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 224px; max-height: 126px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 56.25%;"></div>
+<div class="image-view" data-width="224" data-height="126"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-6683667d7b51efe5.png" data-original-width="224" data-original-height="126" data-original-format="image/png" data-original-filesize="10092" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-6683667d7b51efe5.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<br>
+<p>1和3之间存在数据依赖关系，同时2和3之间也存在数据依赖关系。因此在最终执行的指令序列中，3不能被重排序到1和2的前面（3排到1和2的前面，程序的结果将会被改变）。但1和2之间没有数据依赖关系，编译器和处理器可以重排序1和2之间的执行顺序。<br>
+asif-serial语义使单线程下无需担心重排序的干扰，也无需担心内存可见性问题。</p>
+</li>
+</ul>
+<h3>2.4.3 并发下重排序带来的问题</h3>
+<div class="image-package">
+<div class="image-container" style="max-width: 554px; max-height: 306px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 55.230000000000004%;"></div>
+<div class="image-view" data-width="554" data-height="306"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-28aebe405b128275.png" data-original-width="554" data-original-height="306" data-original-format="image/png" data-original-filesize="51438" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-28aebe405b128275.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<p>这里假设有两个线程A和B，A首先执行init ()方法，随后B线程接着执行use ()方法。线程B在执行操作4时，能否看到线程A在操作1对共享变量a的写入呢？答案是：不一定能看到。<br>
+由于操作1和操作2没有数据依赖关系，编译器和处理器可以对这两个操作重排序；同样，操作3和操作4没有数据依赖关系，编译器和处理器也可以对这两个操作重排序。让我们先来看看，当操作1和操作2重排序时，可能会产生什么效果？操作1和操作2做了重排序。程序执行时，线程A首先写标记变量flag，随后线程B读这个变量。由于条件判断为真，线程B将读取变量a。此时，变量a还没有被线程A写入，这时就会发生错误！<br>
+当操作3和操作4重排序时会产生什么效果？<br>
+在程序中，操作3和操作4存在控制依赖关系。当代码中存在控制依赖性时，会影响指令序列执行的并行度。为此，编译器和处理器会采用猜测（Speculation）执行来克服控制相关性对并行度的影响。以处理器的猜测执行为例，执行线程B的处理器可以提前读取并计算a*a，然后把计算结果临时保存到一个名为重排序缓冲（Reorder Buffer，ROB）的硬件缓存中。当操作3的条件判断为真时，就把该计算结果写入变量i中。猜测执行实质上对操作3和4做了重排序，问题在于这时候，a的值还没被线程A赋值。在单线程程序中，对存在控制依赖的操作重排序，不会改变执行结果（这也是as-if-serial语义允许对存在控制依赖的操作做重排序的原因）；但在多线程程序中，对存在控制依赖的操作重排序，可能会改变程序的执行结果。</p>
+
+<h3>2.4.4 解决在并发下的问题</h3>
+<h4>1）内存屏障——禁止重排序</h4>
+<div class="image-package">
+<div class="image-container" style="max-width: 700px; max-height: 445px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 41.4%;"></div>
+<div class="image-view" data-width="1075" data-height="445"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-3564f1d018da4129.png" data-original-width="1075" data-original-height="445" data-original-format="image/png" data-original-filesize="34272" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-3564f1d018da4129.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<p>Java编译器在生成指令序列的适当位置会插入内存屏障指令来禁止特定类型的处理器重排序，从而让程序按我们预想的流程去执行。<br>
+1、保证特定操作的执行顺序。<br>
+2、影响某些数据（或则是某条指令的执行结果）的内存可见性。</p>
+
+<p>编译器和CPU能够重排序指令，保证最终相同的结果，尝试优化性能。插入一条Memory Barrier会告诉编译器和CPU：不管什么指令都不能和这条Memory Barrier指令重排序。<br>
+Memory Barrier所做的另外一件事是强制刷出各种CPU cache，如一个Write-Barrier（写入屏障）将刷出所有在Barrier之前写入 cache 的数据，因此，任何CPU上的线程都能读取到这些数据的最新版本。<br>
+JMM把内存屏障指令分为4类，解释表格，StoreLoad Barriers是一个“全能型”的屏障，它同时具有其他3个屏障的效果。现代的多处理器大多支持该屏障（其他类型的屏障不一定被所有处理器支持）。</p>
+<h4>2）临界区（synchronized？）</h4>
+<div class="image-package">
+<div class="image-container" style="max-width: 519px; max-height: 496px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 95.57%;"></div>
+<div class="image-view" data-width="519" data-height="496"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-5e8f527ffd82d7ef.png" data-original-width="519" data-original-height="496" data-original-format="image/png" data-original-filesize="66164" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-5e8f527ffd82d7ef.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<p>临界区内的代码可以重排序（但JMM不允许临界区内的代码“逸出”到临界区之外，那样会破坏监视器的语义）。JMM会在退出临界区和进入临界区这两个关键时间点做一些特别处理，虽然线程A在临界区内做了重排序，但由于监视器互斥执行的特性，这里的线程B根本无法“观察”到线程A在临界区内的重排序。这种重排序既提高了执行效率，又没有改变程序的执行结果。</p>
+
+<h2>2.5 Happens-Before</h2>
+<p>用happens-before的概念来阐述操作之间的内存可见性。在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须要存在happens-before关系 。</p>
+<p>两个操作之间具有happens-before关系，并不意味着前一个操作必须要在后一个操作之前执行！happens-before仅仅要求前一个操作（执行的结果）对后一个操作可见，且前一个操作按顺序排在第二个操作之前（the first is visible to and ordered before the second） 。</p>
+<p>1）如果一个操作happens-before另一个操作，那么第一个操作的执行结果将对第二个操作可见，而且第一个操作的执行顺序排在第二个操作之前。(对程序员来说)</p>
+<p>2）两个操作之间存在happens-before关系，并不意味着Java平台的具体实现必须要按照happens-before关系指定的顺序来执行。如果重排序之后的执行结果，与按happens-before关系来执行的结果一致，那么这种重排序是允许的(对编译器和处理器 来说)</p>
+<p>在Java 规范提案中为让大家理解内存可见性的这个概念，提出了happens-before的概念来阐述操作之间的内存可见性。对应Java程序员来说，理解happens-before是理解JMM的关键。JMM这么做的原因是：程序员对于这两个操作是否真的被重排序并不关心，程序员关心的是程序执行时的语义不能被改变（即执行结果不能被改变）。因此，happens-before关系本质上和as-if-serial语义是一回事。as-if-serial语义保证单线程内程序的执行结果不被改变，happens-before关系保证正确同步的多线程程序的执行结果不被改变。</p>
+<div class="image-package">
+<div class="image-container" style="max-width: 677px; max-height: 590px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 87.15%;"></div>
+<div class="image-view" data-width="677" data-height="590"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-8aeb6d12568cac67.png" data-original-width="677" data-original-height="590" data-original-format="image/png" data-original-filesize="166765" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-8aeb6d12568cac67.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<ul>
+<li>Happens-Before规则-无需任何同步手段就可以保证的<br>
+1）程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。<br>
+2）监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。<br>
+3）volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。<br>
+4）传递性：如果A happens-before B，且B happens-before C，那么A happens-before C。<br>
+5）start()规则：如果线程A执行操作ThreadB.start()（启动线程B），那么A线程的ThreadB.start()操作happens-before于线程B中的任意操作。<br>
+6）join()规则：如果线程A执行操作ThreadB.join()并成功返回，那么线程B中的任意操作happens-before于线程A从ThreadB.join()操作成功返回。<br>
+7 ）线程中断规则:对线程interrupt方法的调用happens-before于被中断线程的代码检测到中断事件的发生。</li>
+</ul>
+<h1>3.实现原理</h1>
+<ul>
+<li>内存语义：可以简单理解为 volatile，synchronize，atomic，lock 之类的在 JVM 中的内存方面实现原则</li>
+</ul>
+<h2>3.1 volatile的内存语义</h2>
+<p>volatile变量自身具有下列特性：</p>
+<ul>
+<li>可见性。对一个volatile变量的读，总是能看到（任意线程）对这个volatile变量最后的写入。</li>
+<li>原子性：对任意单个volatile变量的读/写具有原子性，但类似于volatile++这种复合操作不具有原子性。</li>
+</ul>
+<p>volatile写的内存语义如下：当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 523px; max-height: 363px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 69.41000000000001%;"></div>
+<div class="image-view" data-width="523" data-height="363"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-5b7339e9829f084f.png" data-original-width="523" data-original-height="363" data-original-format="image/png" data-original-filesize="38848" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-5b7339e9829f084f.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<p>volatile读的内存语义如下：当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 651px; max-height: 431px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 66.21000000000001%;"></div>
+<div class="image-view" data-width="651" data-height="431"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-ab1319326e4b4ea1.png" data-original-width="651" data-original-height="431" data-original-format="image/png" data-original-filesize="54835" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-ab1319326e4b4ea1.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<p>volatile重排序规则：</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 700px; max-height: 293px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 28.53%;"></div>
+<div class="image-view" data-width="1027" data-height="293"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-293ce3182f23da52.png" data-original-width="1027" data-original-height="293" data-original-format="image/png" data-original-filesize="22879" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-293ce3182f23da52.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<p>volatile内存语义的实现——JMM对volatile的内存屏障插入策略：<br>
+在每个volatile写操作的前面插入一个StoreStore屏障。在每个volatile写操作的后面插入一个StoreLoad屏障。<br>
+在每个volatile读操作的后面插入一个LoadLoad屏障。在每个volatile读操作的后面插入一个LoadStore屏障。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 516px; max-height: 352px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 68.22%;"></div>
+<div class="image-view" data-width="516" data-height="352"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-b0b75a3272253281.png" data-original-width="516" data-original-height="352" data-original-format="image/png" data-original-filesize="57583" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-b0b75a3272253281.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<div class="image-package">
+<div class="image-container" style="max-width: 528px; max-height: 344px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 65.14999999999999%;"></div>
+<div class="image-view" data-width="528" data-height="344"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-c8a7025ca8c1ee3f.png" data-original-width="528" data-original-height="344" data-original-format="image/png" data-original-filesize="59547" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-c8a7025ca8c1ee3f.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h3>3.1.1 volatile的实现原理</h3>
+<p>有volatile变量修饰的共享变量进行写操作的时候会使用CPU提供的Lock前缀指令：</p>
+<ul>
+<li>将当前处理器缓存行的数据写回到系统内存</li>
+<li>这个写回内存的操作会使在其他CPU里缓存了该内存地址的数据无效。</li>
+</ul>
+<h2>3.2 锁的内存语义</h2>
+<p>当线程释放锁时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存中。。<br>
+当线程获取锁时，JMM会把该线程对应的本地内存置为无效。从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 417px; max-height: 349px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 83.69%;"></div>
+<div class="image-view" data-width="417" data-height="349"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-aa5c342e5a31b159.png" data-original-width="417" data-original-height="349" data-original-format="image/png" data-original-filesize="19931" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-aa5c342e5a31b159.png"></div>
+</div>
+<div class="image-caption"></div>
+</div><br>
+<div class="image-package">
+<div class="image-container" style="max-width: 486px; max-height: 399px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 82.1%;"></div>
+<div class="image-view" data-width="486" data-height="399"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-fd26a9ca30cd56f3.png" data-original-width="486" data-original-height="399" data-original-format="image/png" data-original-filesize="41501" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-fd26a9ca30cd56f3.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h3>3.2.1 synchronized的实现原理</h3>
+<p>使用monitorenter和monitorexit指令实现的：</p>
+<ul>
+<li>monitorenter指令是在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处</li>
+<li>每个monitorenter必须有对应的monitorexit与之配对</li>
+<li>任何对象都有一个monitor与之关联，当且一个monitor被持有后，它将处于锁定状态</li>
+</ul>
+<p>锁的存放位置：</p>
+<br>
+<div class="image-package">
+<div class="image-container" style="max-width: 700px; max-height: 218px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 20.26%;"></div>
+<div class="image-view" data-width="1076" data-height="218"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-ff64e9ed97012f2a.png" data-original-width="1076" data-original-height="218" data-original-format="image/png" data-original-filesize="69309" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-ff64e9ed97012f2a.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h3>3.2.2 了解各种锁</h3>
+<p>锁一共有4种状态，级别从低到高依次是：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态。</p>
+<p>偏向锁：大多数情况下，锁不仅不存在多线程竞争，而且总是由同一线程多次获得，为了让线程获得锁的代价更低而引入了偏向锁。无竞争时不需要进行CAS操作来加锁和解锁。</p>
+<p>轻量级锁：无竞争时通过CAS操作来加锁和解锁。（自旋锁——是一种锁的机制，不是状态）</p>
+<p>重量级锁：真正的加锁操作</p>
+<div class="image-package">
+<div class="image-container" style="max-width: 700px; max-height: 169px; background-color: transparent;">
+<div class="image-container-fill" style="padding-bottom: 19.74%;"></div>
+<div class="image-view" data-width="856" data-height="169"><img data-original-src="//upload-images.jianshu.io/upload_images/4222138-df7012f6129827d3.png" data-original-width="856" data-original-height="169" data-original-format="image/png" data-original-filesize="99850" class="" style="cursor: zoom-in;" src="./JMM和底层实现原理 - 简书_files/4222138-df7012f6129827d3.png"></div>
+</div>
+<div class="image-caption"></div>
+</div>
+<h2>3.3 final的内存语义</h2>
+<p>编译器和处理器要遵守两个重排序规则：</p>
+<ul>
+<li>在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。</li>
+<li>初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。</li>
+</ul>
+<p>final域为引用类型：</p>
+<ul>
+<li>增加了如下规则：在构造函数内对一个final引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。</li>
+</ul>
+<p>final语义在处理器中的实现：</p>
+<ul>
+<li>会要求编译器在final域的写之后，构造函数return之前插入一个StoreStore障屏。</li>
+<li>读final域的重排序规则要求编译器在读final域的操作前面插入一个LoadLoad屏障</li>
+</ul>
+<h1><em>参考</em></h1>
+<ul>
+<li>1）享学课堂Mark老师笔记</li>
+</ul>
+
+          </div>
+        </div>
+    </div>
+
+    <!-- 如果是付费文章，未购买，则显示购买按钮 -->
+
+    <!-- 连载目录项 -->
+
+    <!-- 如果是付费文章 -->
+      <!-- 如果是付费连载，已购买，且作者允许赞赏，则显示付费信息和赞赏 -->
+        <div id="free-reward-panel" class="support-author"><p>小礼物走一走，来简书关注我</p> <div class="btn btn-pay">赞赏支持</div> <div class="supporter"><ul class="support-list"></ul> <!----></div> <!----> <!----></div>
+
+      <div class="show-foot">
+        <a class="notebook" href="https://www.jianshu.com/nb/28448708">
+          <i class="iconfont ic-search-notebook"></i>
+          <span>高并发多线程</span>
+</a>        <div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="转载请联系作者获得授权，并标注“简书作者”。">
+          © 著作权归作者所有
+        </div>
+        <div class="modal-wrap" data-report-note="">
+          <a id="report-modal">举报文章</a>
+        </div>
+      </div>
+
+      <!-- 文章底部作者信息 -->
+        <div class="follow-detail">
+          <div class="info">
+            <a class="avatar" href="https://www.jianshu.com/u/c253b01b2c35">
+              <img src="./JMM和底层实现原理 - 简书_files/58106418a060.jpg" alt="96">
+</a>            <a class="btn btn-success follow"><i class="iconfont ic-follow"></i><span>关注</span></a>
+            <a class="title" href="https://www.jianshu.com/u/c253b01b2c35">王侦</a>
+              <img class="badge-icon" data-toggle="tooltip" title="" src="./JMM和底层实现原理 - 简书_files/b67c298d-f020-4f89-aac6-0710bc0709ec" alt="B67c298d f020 4f89 aac6 0710bc0709ec" data-original-title="日更达人">
+              <i class="iconfont ic-man"></i>
+          <p>写了 938468 字，被 686 人关注，获得了 1091 个喜欢</p></div>
+            <div class="signature">叠加思维，持续积累</div>
+        </div>
+
+    <div class="meta-bottom">
+      <div data-v-6ddd02c6="" class="like"><div data-v-6ddd02c6="" class="btn like-group"><div data-v-6ddd02c6="" class="btn-like"><a data-v-6ddd02c6="">喜欢</a></div> <div data-v-6ddd02c6="" class="modal-wrap"><a data-v-6ddd02c6="">16</a></div></div> <!----></div>
+      <div class="share-group">
+        <a class="share-circle" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
+          <i class="iconfont ic-wechat"></i>
+        </a>
+        <a class="share-circle" data-action="weibo-share" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;&#39;, &#39;推荐 @王侦_SEU 的文章《JMM和底层实现原理》（ 分享自 @简书 ）&#39;,&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weibo&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));" data-original-title="分享到微博">
+          <i class="iconfont ic-weibo"></i>
+        </a>
+        <a class="share-circle" data-toggle="tooltip" id="longshare" target="_blank" data-original-title="" title="">
+            <div class="qrcode" id="qrcode">
+             <img src="./JMM和底层实现原理 - 简书_files/download-index-side-qrcode-cb13fc9106a478795f8d10f9f632fccf.png" alt="Download index side qrcode">
+             <p>下载app生成长微博图片</p>
+             </div>
+          <i class="iconfont ic-picture"></i>
+        </a>
+        <a class="share-circle more-share" tabindex="0" data-toggle="popover" data-placement="top" data-html="true" data-trigger="focus" href="javascript:void(0);" data-content="
+          &lt;ul class=&quot;share-list&quot;&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=qzone&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 王侦 的文章《JMM和底层实现原理》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-zone&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到QQ空间&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=twitter&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 王侦 的文章《JMM和底层实现原理》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-twitter&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=facebook&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-facebook&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Facebook&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=google_plus&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-google&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Google+&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=douban&#39;)+&#39;&amp;title=&#39;+e(&#39;JMM和底层实现原理&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-douban&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到豆瓣&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+        " data-original-title="" title="">更多分享</a>
+      </div>
+    </div>
+
+    <div id="note-ad" class=""><a id="web-note-ad-2" target="_blank" href="https://www.jianshu.com/p/7dd2ad568a69"><img src="./JMM和底层实现原理 - 简书_files/gupao-43e5e6af6d2d1b2639ab8da6cdcdd1ed.png" alt="Web note ad 1"></a></div>
+
+    <!--
+    <div id="note-comment-above-ad-container">
+      <span id="youdao-comment-ad" class="ad-badge">广告</span>
+    </div>
+    -->
+    <div><div id="comment-list" class="comment-list"><div><form class="new-comment"><a class="avatar"><img src="./JMM和底层实现原理 - 简书_files/avatar_default-78d4d1f68984cd6d4379508dd94b4210.png"></a> <div class="sign-container"><a href="https://www.jianshu.com/sign_in?utm_source=desktop&amp;utm_medium=not-signed-in-comment-form" class="btn btn-sign">登录</a> <span>后发表评论</span></div></form> <!----></div> <!----> <div class="comments-placeholder" style="display: none;"><div class="author"><div class="avatar"></div> <div class="info"><div class="name"></div> <div class="meta"></div></div></div> <div class="text"></div> <div class="text animation-delay"></div> <div class="tool-group"><i class="iconfont ic-zan-active"></i><div class="zan"></div> <i class="iconfont ic-list-comments"></i><div class="zan"></div></div></div> <div id="normal-comment-list" class="normal-comment-list"><div><!----> <div><div class="top-title"><span>评论</span> <a class="close-btn" style="display: none;">关闭评论</a></div> <div class="no-comment"></div> <div class="text">
+            智慧如你，不想<a href="https://www.jianshu.com/sign_in?utm_source=desktop&amp;utm_medium=not-signed-in-nocomments-text">发表一点想法</a>咩~
+          </div></div> <!----> <div class="comments-placeholder" style="display: none;"><div class="author"><div class="avatar"></div> <div class="info"><div class="name"></div> <div class="meta"></div></div></div> <div class="text"></div> <div class="text animation-delay"></div> <div class="tool-group"><i class="iconfont ic-zan-active"></i><div class="zan"></div> <i class="iconfont ic-list-comments"></i><div class="zan"></div></div></div> </div></div> <!----> <div><!----></div></div></div>
+  </div>
+
+  <div class="side-tool"><ul><li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="回到顶部" style=""><a class="function-button"><i class="iconfont ic-backtop"></i></a></li> <!----> <!----> <!----> <!----> <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="分享文章" id="share"><a tabindex="0" role="button" data-toggle="popover" data-placement="left" data-html="true" data-trigger="focus" href="javascript:void(0);" data-content="&lt;ul class=&#39;share-list&#39; style=&quot;width:220px&quot;&gt;
+                  &lt;li&gt;&lt;a class=&quot;weixin-share&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-weixin&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到微信&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;&#39;, &#39;推荐 @王侦_SEU 的文章《JMM和底层实现原理》（ 分享自 @简书 ）&#39;,&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weibo&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-weibo&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到微博&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  
+                  &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=qzone&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 王侦 的文章《JMM和底层实现原理》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-zone&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到QQ空间&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=twitter&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 王侦 的文章《JMM和底层实现原理》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-twitter&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=facebook&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-facebook&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Facebook&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=google_plus&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-google&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Google+&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                  &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;https://www.jianshu.com/p/8a58d8335270?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=douban&#39;)+&#39;&amp;title=&#39;+e(&#39;JMM和底层实现原理&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-douban&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到豆瓣&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;" data-original-title="" title="" class="function-button"><i class="iconfont ic-share"></i></a> <!----></li> <!----></ul></div>
+</div>
+<div class="note-bottom">
+  <div><div class="main"><div class="title">被以下专题收入，发现更多相似内容</div> <!----> <div class="include-collection"><!----> <a href="https://www.jianshu.com/c/44a771cec0ba?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./JMM和底层实现原理 - 简书_files/欧洲田园.jpg"><div class="name">JVM</div></a> <!----></div></div> <!----> <!----></div>
+  <div><div class="recommend-note"><div class="meta"><div class="title">
+        推荐阅读
+        <a target="_blank" href="https://www.jianshu.com/" class="more">
+           更多精彩内容<i class="iconfont ic-link"></i></a></div></div> <div class="list"><div class="note"><a href="https://log-yex.youdao.com/ct?slot=f2ac00aef0eb6b673f4e4639046bc6f8&amp;youdao_bid=e3597f34-e97b-4f8b-9420-53d832d94d01&amp;yexi=505d7cdd14bbc909cfe0db53374606a7&amp;yexcb=0B7qADqn8ZBTsYyqzSfQ6cH8wfvblXurs56-JWPEv0TcKThdUvPL0ZZwC_XNyK45SpCnGzFdZbMLESjYr3hX9y6ujFEZog3Vvm_v8sgCSYwDqXPOZnNM7U78aq6kQQis1yQO35Um6i6JkP8IpirWnThXmVCnRzxfkmISWx85z0xaEZv5jo6ElCQhUqOXIUs-Zhm3994YALp5Sbpv9CY14g&amp;yexr=https%3A%2F%2Fdsp-click.youdao.com%2Fclk%2Frequest.s%3Fk%3DdVNyNP8LN7V7Jt9G88nVoPA5VwbgWBAAIwMFYxUiNP3Xxo%252BoRxcJpjjAgKuViCqvIxCHqA9N%252F2c%252F9Be%252FcwcSrxynWykc4WOTIBNzGPxJhn5JLxuAJ%252FgnHAAz%252Fb0KPch88P2%252Fo7F5xKV438%252FvCYSXQjg1WEezI4NrSbw5JMgV1zV9ulwGOtM6TkpTud7OQM2GleI5oPzmd2QgtkoS%252FAS6y7GNfebaKyIUcwDv%252F%252FmQmseXazv0DwIDiyqAEyEJEy5aeR8oUz%252FUNQa7I0rT9aweQVkxiRwcxgjrh%252BJB0yd2bRMZebL2zJpnw3L%252FaFDfeEV%252FePsf1jAUrA4yyivfnY3gRamBAVsqaOONP0kG0ukmlt1xEzAfUIzlaD%252BPsuYxl93bzLXiTCqsE4919%252FOL%252FIuGQJeIRXzFKaUhJZ45epJZw6o8wJGOQ0HjrFUlnJrmNACAaH3a5BxxIlwQ2%252BMheupEvbKADwa72na7W0DMzOVIgny2gcbSz6c5DjUEhuPMmVbFa%252FZizuROZCyblVyJAJdvDxpgOW%252Fa8tzrla5zJN2Kj%252FmHOGHpgJlkiajKSyewyk%252FPssmsWaHDYUY4CoUzKOfnK1haHaTjUaPS%252BSJhR9o4%252BLLtbnHx0hxB3YLQmHPjUzi9SDKGc0O8kwPJ8jr3BDMxoQ%252BjarRGjKVvNrFI7%252FVtPB4nksseOJ%252BHt3AJsgZySbbN6tqee%252B26xseTZvZto2gUbo0cZoMlBRxtNCnlZ6O3oTuXhxLNY0h%252FbVhOXvgew%252FxXDG4CMXinSn2UyuMiBnsWQhRW1jHF%252B2Pauy6AjeO8GKHmhr3l8lSWuc66YyzjX9VB3A3OVbb4T8GZiwhLNumPWZXm1xzsGdbKSjUoBKVNLaIAZFExjWnwbvIE2iOr14QuLeJCHRqOzKvQMWxcJFxa8sJNv4VwU3%252FhpZua1q27liEogqj2jUr%252F3wfGm9mnJui8bPqne3uWiZs%252FferXEHE2awWXcu9HvDeqiTGrJkRMq75L%252FfT7sc%252FpQydj%252Bh5HdIF718aPqEcXCaY4wICrlYgqr9fGj6hHFwmmOMCAq5WIKq%252FXxo%252BoRxcJpjjAgKuViCqvayVn%252BcR31%252FZlRFQ52t6aUw%253D%253D%26isrd%3D1%26youdao_bid%3De3597f34-e97b-4f8b-9420-53d832d94d01&amp;iid=%7B%22-1639806794053061232%22%3A1%7D&amp;sid=17836" target="_blank" class="youdao-recommended-ad clearfix"><span class="img" style="background-image: url(&quot;https://oimagec2.ydstatic.com/image?id=-1639806794053061232&amp;product=adpublish&amp;w=320&amp;h=240&amp;sc=0&amp;rm=0&quot;);"></span> <div class="info"><span class="title">戴尔官网5折秒杀高端电脑，低至￥2649</span> <span class="intro">戴尔官网5折秒杀高端电脑，低至￥2649</span> <span class="ad-badge">广告</span></div></a></div></div></div></div>
+
+  <!-- 相关文章 -->
+      <!-- 未登录用户 -->
+      <div class="seo-recommended-notes">
+
+            <div class="note have-img">
+              <a class="cover" target="_blank" href="https://www.jianshu.com/p/e0e80d004a86?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <img src="./JMM和底层实现原理 - 简书_files/437049-a558645407f74dba.jpg" alt="240">
+</a>              <a class="title" target="_blank" href="https://www.jianshu.com/p/e0e80d004a86?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">Java内存模型深入讲解</a>
+              <p class="description">此文为转载： 转载地址放在链接中：原文发表地址 整理 by 微凉季节 评价：从多线程引出处理器内存，再杀到总线仲裁和总线事务，精彩，行云流水，纵深直入，势不可挡，直击重点，漂亮！ 从Java超越native杀到c++直击汇编，再从汇编杀到硬件处理器总线 牛逼哄哄简直是黑白通...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/66d08e75dce1?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/11-4d7c6ca89f439111aff57b23be1c73ba.jpg" alt="48">
+                </div>
+                <span class="name">topwqp</span>
+</a>            </div>
+
+            <div class="note have-img">
+              <a class="cover" target="_blank" href="https://www.jianshu.com/p/459262a4c69f?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <img src="./JMM和底层实现原理 - 简书_files/5376408-1bb781b1ec9ce06a.png" alt="240">
+</a>              <a class="title" target="_blank" href="https://www.jianshu.com/p/459262a4c69f?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">《Java并发编程的艺术》学习笔记</a>
+              <p class="description">本文是我自己在秋招复习时的读书笔记，整理的知识点，也是为了防止忘记，尊重劳动成果，转载注明出处哦！如果你也喜欢，那就点个小心心，文末赞赏一杯豆奶吧，嘻嘻。 让我们共同成长吧…… 第1章 并发编程的挑战 并发编程的目的是让程序运行得更快，但是并不是启动更多的线程就能让程序最大...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/b36dbb56f10f?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/4961b14e-6a4d-4830-9206-ce7521324b2e.png" alt="48">
+                </div>
+                <span class="name">我是一禅呐</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/516f8e911b98?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">Java并发编程的艺术</a>
+              <p class="description">第2章 java并发机制的底层实现原理 Java中所使用的并发机制依赖于JVM的实现和CPU的指令。 2.1 volatile的应用 1.volatile的定义与实现原理 volatile可以保证变量的可见性。 如何保证？ volatile变量写操作时，会引发两件事： 1）...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/6826384e57da?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/2-9636b13945b9ccf345bc98d0d81074eb.jpg" alt="48">
+                </div>
+                <span class="name">kennethan</span>
+</a>            </div>
+
+            <div class="note have-img">
+              <a class="cover" target="_blank" href="https://www.jianshu.com/p/743f5abd3383?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <img src="./JMM和底层实现原理 - 简书_files/4728488-c903499e7ff10ffb..png" alt="240">
+</a>              <a class="title" target="_blank" href="https://www.jianshu.com/p/743f5abd3383?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">Java内存模型总结（摘选）</a>
+              <p class="description">Java的并发采用的是共享内存模型（而非消息传递模型），线程之间共享程序的公共状态，线程之间通过写-读内存中的公共状态来隐式进行通信。多个线程之间是不能直接传递数据交互的，它们之间的交互只能通过共享变量来实现 同步是显式进行的。程序员必须显式指定某个方法或某段代码需要在线程...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/5cd384557572?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/88d980fb-6403-4d2c-9dcf-c34fca13575d.jpg" alt="48">
+                </div>
+                <span class="name">阿斯蒂芬2</span>
+</a>            </div>
+
+            <div class="note have-img">
+              <a class="cover" target="_blank" href="https://www.jianshu.com/p/a2a1000f3e2c?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <img src="./JMM和底层实现原理 - 简书_files/10803273-5cd70dca0e2cfe99.png" alt="240">
+</a>              <a class="title" target="_blank" href="https://www.jianshu.com/p/a2a1000f3e2c?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">五 Java内存模型</a>
+              <p class="description">目录： 1. 指令重排 2. 顺序一致性 3. volatile 4. final 1.指令重排 要了解指令重排，需要很多知识。首先的一个核心点，指令重排的目的是为了提升程序性能。如果没有这个考虑，也就没有了指令重排。 由于内容十分多，我单开一篇文章讲指令重排。指令重排序详...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/38eb16b24cb9?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/7-0993d41a595d6ab6ef17b19496eb2f21.jpg" alt="48">
+                </div>
+                <span class="name">西部小笼包</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/20db2149491f?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">扣扣空间</a>
+              <p class="description">555551 啦咯啦咯拒绝啦啦咯啦咯拒绝啦啦咯啦咯拒绝啦</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/98cb76812d5e?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/7e8898a3-ce50-4ed0-9733-4fde49abadca.jpg" alt="48">
+                </div>
+                <span class="name">丶让千寻飞你就你直接你你你里酒</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/a68af819402f?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">spark parallelize</a>
+              <p class="description">通过调用SparkContext的parallelize方法，在一个已经存在的Scala集合上创建的（一个Seq对象）。集合的对象将会被拷贝，创建出一个可以被并行操作的分布式数据集。</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/39e8c20d237e?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/3-9a2bcc21a5d89e21dafc73b39dc5f582.jpg" alt="48">
+                </div>
+                <span class="name">crazydane</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/4e71f8cf0efd?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">离婚那些事儿（二）</a>
+              <p class="description">07 何姿再次看了一下昏暗的灯光下刺眼的手机屏幕，那一行黑色的小字耀武扬威的，到底让她感到触目惊心。 “管他呢，明天再说。”她觉得自己很累了，连洗漱的力气都没有，倒头就睡。何姿就是这样，管它明天天要塌下来，今天快活就好，眼前坚决不管不顾。 她已经抓住了幸福的稻草，也就慢慢掉...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/5b2a5ec1cc17?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/2766a17effdd.jpg" alt="48">
+                </div>
+                <span class="name">清扬婉儿</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/6138c64ccc05?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">2018-01-11</a>
+              <p class="description">有一句话说：你现在不去做的事，以后也不会去做。 想想过往的经验，的确如此。 所以，与其去期盼未来，不如别辜负每一个当下的时光。也许对未来真正的慷慨，是把一切都献给现在。 去学琴吧，哪怕每天只有半个小时的时间。去读喜欢的书吧，哪怕只是在接孩子的空闲。去养花种草吧，哪怕只是为了...</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/6ec337560fa8?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/e16355e9-d25f-4d7c-89b2-a505dd8e3e0d.jpg" alt="48">
+                </div>
+                <span class="name">萌芽暖暖</span>
+</a>            </div>
+
+            <div class="note ">
+                            <a class="title" target="_blank" href="https://www.jianshu.com/p/ee7c6c89a8d3?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation">丹气</a>
+              <p class="description">自然的高度与视知空气般弥漫的广度与虚无类似的同在气息腹部丹田和大地相连的深沉广阔</p>
+              <a class="author" target="_blank" href="https://www.jianshu.com/u/55d7fedc9ce9?utm_campaign=maleskine&amp;utm_content=user&amp;utm_medium=seo_notes&amp;utm_source=recommendation">
+                <div class="avatar">
+                  <img src="./JMM和底层实现原理 - 简书_files/8a10fc43-9ce5-4635-8eb0-8afeb34f0cee.jpeg" alt="48">
+                </div>
+                <span class="name">咸叔说</span>
+</a>            </div>
+      </div>
+</div>
+
+    <script type="application/json" data-name="page-data">{"user_signed_in":false,"locale":"zh-CN","os":"mac","read_mode":"day","read_font":"font2","note_show":{"is_author":false,"is_following_author":false,"is_liked_note":false,"follow_state":0,"uuid":"c5615155-8d57-4b75-955c-3b12b70b02c1"},"note":{"id":33098411,"gupao_eligible":true,"slug":"8a58d8335270","user_id":4222138,"notebook_id":28448708,"commentable":true,"likes_count":16,"views_count":8494,"public_wordage":6337,"comments_count":0,"featured_comments_count":0,"total_rewards_count":0,"is_author":false,"paid_type":"free","paid":false,"paid_content_accessible":false,"author":{"nickname":"王侦","total_wordage":938468,"followers_count":686,"total_likes_count":1091}}}</script>
+    
+    <script src="./JMM和底层实现原理 - 简书_files/babel-polyfill-d171e3dec4b6c15634dd.js" crossorigin="anonymous"></script>
+    <script src="./JMM和底层实现原理 - 简书_files/web-base-944b253af20b832474e7.js" crossorigin="anonymous"></script>
+<script src="./JMM和底层实现原理 - 简书_files/web-c3f12e5a1de1e5c97993.js" crossorigin="anonymous"></script>
+    
+    <script src="./JMM和底层实现原理 - 简书_files/entry-ef9dddea37a7addc8099.js" crossorigin="anonymous"></script>
+    <script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+  
+
+<!----><!----></body></html>
