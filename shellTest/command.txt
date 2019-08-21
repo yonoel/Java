@@ -1,0 +1,28 @@
+#ip config
+ifconfig
+#创建文件
+mkdir 
+touch file
+# 浏览
+cat file
+open file
+# 正则
+grep [-options] pattern file
+ --color 高亮
+# 编辑文件
+I进入insert，q！退出，wq写入退出
+# 权限 要有有权限的用户
+chmod [permission] [group/user] file
+chmod 777 -R /home/data/pmt 
+# 查询某个端口的情况
+# win
+netstat -ano |findstr 8080
+# linux
+netstat -I 8080
+#linux发起请求
+curl www.baidu.com
+    -I/--head	只显示传输文档，经常用于测试连接本身
+    -d key=value -G, --get           使用 HTTP GET 方法发送 -d 数据  (H)
+#mac下计算hash
+shasum -a256 path 256哈希值
+	-h
