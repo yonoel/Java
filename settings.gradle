@@ -1,0 +1,3 @@
+include 'JavaConcurrencyInParctice'
+findProject(':JavaConcurrencyInParctice')?.name = 'com.study'
+
